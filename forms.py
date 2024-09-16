@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
@@ -20,5 +20,9 @@ class ContactForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     message = TextAreaField('Message', validators=[DataRequired()])
+    status = RadioField('Are you an NSCC Employee or NSCC Student?', 
+                        choices=[('NSCC Employee', 'NSCC Employee'), 
+                                 ('NSCC Student', 'NSCC Student')],
+                        validators=[DataRequired()])
     submit = SubmitField('Submit')
 
