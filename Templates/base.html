@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}My Flask App{% endblock %}</title>
+    <title>{% block title %}NSCC Foundation{% endblock %}</title>
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -12,10 +12,18 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
+    {% block extra_css %}{% endblock %}
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{{ url_for('index') }}">My Flask App</a>
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img
+          src="{{ url_for('static', filename='images/logo.png') }}"
+          alt="NSCC Foundation Logo"
+          style="height: 40px; width: auto; margin-right: 10px"
+        />
+        NSCC ART Foundation
+      </a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
@@ -30,6 +38,8 @@
         </ul>
       </div>
     </nav>
+
+    {% block slideshow %}
     <div class="slideshow-container">
       <div class="slideshow">
         <img
@@ -48,14 +58,18 @@
         <!-- Add more images as needed -->
       </div>
     </div>
+    {% endblock %}
+
     <div class="container mt-4">
       {% block content %}
       <!-- Content goes here -->
       {% endblock %}
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

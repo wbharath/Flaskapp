@@ -1,4 +1,4 @@
-// script.js
+// Existing code for slides
 let slideIndex = 0;
 showSlides();
 
@@ -14,10 +14,18 @@ function showSlides() {
   slides[slideIndex - 1].style.display = "block";
   setTimeout(showSlides, 3000); // Change image every 3 seconds
 }
-document.addEventListener("DOMContentLoaded", function () {
-  var registerModalElement = document.getElementById("registerModal");
-  if (registerModalElement) {
-    var registerModal = new bootstrap.Modal(registerModalElement);
-    registerModal.show();
-  }
-});
+function openContactForm() {
+  console.log("Opening contact form");
+  document.getElementById("contactFormPopup").style.display = "flex";
+}
+
+function closeContactForm() {
+  console.log("Closing contact form");
+  document.getElementById("contactFormPopup").style.display = "none";
+  window.location.href = "/home"; // Redirect to index.html
+}
+
+// Open contact form when the page loads
+if (window.location.pathname === "/contact") {
+  openContactForm();
+}

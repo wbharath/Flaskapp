@@ -1,0 +1,29 @@
+<!-- contact.html -->
+{% extends "base.html" %} {% block title %}Contact Us{% endblock %} {% block
+content %}
+<!-- Contact form popup -->
+<div id="contactFormPopup" class="popup">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closeContactForm()">&times;</span>
+    <h2>Contact Us</h2>
+    <p>If you have any inquiries, please fill out and submit the form below:</p>
+    <form method="post" action="{{ url_for('contact') }}">
+      {{ form.hidden_tag() }}
+      <!-- Your form fields go here -->
+      <div class="form-group">
+        {{ form.name.label(class="form-label") }} {{
+        form.name(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.email.label(class="form-label") }} {{
+        form.email(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.message.label(class="form-label") }} {{
+        form.message(class="form-control") }}
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

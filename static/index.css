@@ -9,7 +9,7 @@ body {
 
 /* Header styles */
 header {
-  background-color: #f8f9fa; /* Light background for the header */
+  background-color: #004477; /* Light background for the header */
   padding: 1rem;
   position: fixed;
   width: 100%;
@@ -20,26 +20,21 @@ header {
 }
 
 .navbar {
-  margin-bottom: 20px; /* Space below the navbar */
+  background-color: #004477 !important;
+  z-index: 2; /* Above the slideshow */
+  position: relative;
 }
 
-.navbar-nav {
-  flex-direction: row; /* Align links horizontally */
+.navbar-light .navbar-nav .nav-link {
+  color: #ffffff !important; /* Set link color */
 }
 
-.navbar-nav .nav-item {
-  margin-right: 15px; /* Space between links */
+.navbar-light .navbar-brand {
+  color: #ffffff !important; /* Set brand color */
 }
 
-.navbar-nav .nav-link {
-  color: #007bff; /* Primary color for links */
-  font-weight: bold; /* Make link text bold */
-  text-decoration: none; /* Remove underline */
-}
-
-.navbar-nav .nav-link:hover {
-  color: #0056b3; /* Darker color on hover */
-  text-decoration: underline; /* Underline on hover */
+.navbar-light .navbar-toggler-icon {
+  background-color: #ffffff !important; /* Set the color of the toggler icon if needed */
 }
 
 /* Slideshow styles */
