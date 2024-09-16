@@ -2,7 +2,10 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, ContactForm
+from flask_mail import Mail, Message
+
+
 import os
 app = Flask(__name__)
 
@@ -16,6 +19,17 @@ app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'default_secret_ke
 # Initialize the database and migrate
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'bharadwajdurgasai@gmail.com'
+app.config['MAIL_PASSWORD'] = 'yubj nugq ardo otkp'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 # Define the User model
 class User(db.Model):
@@ -38,6 +52,10 @@ class Item(db.Model):
     description = db.Column(db.String(255))
 
 @app.route('/')
+def home_redirect():
+    return redirect(url_for('register'))
+
+@app.route('/home')
 def index():
     items = Item.query.all()  # Fetch all items from the database
     return render_template('index.html', items=items)
@@ -65,6 +83,24 @@ def login():
         else:
             flash('Login failed. Check your email and/or password', 'danger')
     return render_template('login.html', form=form)
+
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    form = ContactForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        message = form.message.data
+        
+        msg = Message('Contact Form Message', sender=email, recipients=['your_email@gmail.com'])
+        msg.body = f"Message from {name} ({email}):\n\n{message}"
+        mail.send(msg)
+        flash('Message sent successfully!', 'success')
+        return redirect(url_for('index'))
+
+    return render_template('contact.html', form=form)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
