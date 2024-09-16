@@ -1,4 +1,3 @@
-<!-- contact.html -->
 {% extends "base.html" %} {% block title %}Contact Us{% endblock %} {% block
 content %}
 <!-- Contact form popup -->
@@ -22,6 +21,12 @@ content %}
         {{ form.message.label(class="form-label") }} {{
         form.message(class="form-control") }}
       </div>
+      <div class="form-group">
+        {{ form.status.label(class="form-label") }}<br />
+        {{ form.status() }}
+        <!-- This will render radio buttons -->
+      </div>
+
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>

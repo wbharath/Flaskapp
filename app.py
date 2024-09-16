@@ -23,11 +23,11 @@ migrate = Migrate(app, db)
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
+app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = 'bharadwajdurgasai@gmail.com'
-app.config['MAIL_PASSWORD'] = 'yubj nugq ardo otkp'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_PASSWORD'] = 'wybw aklx ssat vqky'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
 
@@ -85,6 +85,25 @@ def login():
     return render_template('login.html', form=form)
 
 
+# @app.route('/contact', methods=['GET', 'POST'])
+# def contact():
+#     form = ContactForm()
+#     if form.validate_on_submit():
+#         name = form.name.data
+#         email = form.email.data
+#         message = form.message.data
+
+        
+#         msg = Message('Contact Form Message', sender=email, recipients=['bharadwajdurgasai@gmail.com'])
+#         msg.body = f"Message from {name} ({email}):\n\n{message}"
+#         mail.send(msg)
+#         flash('Message sent successfully!', 'success')
+#         return redirect(url_for('index'))
+
+#     return render_template('contact.html', form=form)
+
+
+
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm()
@@ -92,14 +111,30 @@ def contact():
         name = form.name.data
         email = form.email.data
         message = form.message.data
+        status = form.status.data  # Get the selected radio button value
         
-        msg = Message('Contact Form Message', sender=email, recipients=['your_email@gmail.com'])
-        msg.body = f"Message from {name} ({email}):\n\n{message}"
-        mail.send(msg)
-        flash('Message sent successfully!', 'success')
-        return redirect(url_for('index'))
+        msg = Message('Contact Form Message',
+                      sender=email,
+                      recipients=['bharadwajdurgasai@gmail.com'])
+        msg.body = f'''
+        Message from {name} ({email}):
+        
+        Status: {status}
+        
+        Message:
+        {message}
+        '''
+        try:
+            mail.send(msg)
+            flash('Message sent successfully!', 'success')
+            return redirect(url_for('index'))
+        except Exception as e:
+            print(f'Error sending email: {e}')
+            flash('An error occurred while sending your message. Please try again.', 'error')
+            return redirect(url_for('contact'))
 
     return render_template('contact.html', form=form)
+
 
 
 if __name__ == '__main__':
