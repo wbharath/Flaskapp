@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/art.css') }}" />
+{% endblock %} {% block content %}
+<!-- Form Section (appears below the slideshow from base.html) -->
+<div class="container mt-4 form-container">
+  <h1>Minimal Art Form</h1>
+  <form method="POST" action="{{ url_for('manage_art') }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.title.label(class="form-label") }} {{
+      form.title(class="form-control") }}
+    </div>
+    <button type="submit" class="btn btn-primary">
+      {{ form.submit.label }}
+    </button>
+  </form>
+</div>
+{% endblock %}
