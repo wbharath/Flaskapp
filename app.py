@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_migrate import Migrate
 from forms import RegistrationForm, LoginForm, ContactForm
 from flask_mail import Mail, Message
-from forms import ManageArtForm, MinimalForm
+from forms import ManageArtForm
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash  # Add this line
 import os
@@ -79,11 +79,12 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
+        # Default all new users to 'User' role
         user = Login(
             username=form.username.data,
             email=form.email.data,
             password_hash=hashed_password,
-            role=form.role.data  # Save the selected role
+            role='User'  # Default role
         )
         db.session.add(user)
         db.session.commit()
@@ -94,16 +95,16 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        # Redirect authenticated users away from the login page
         return redirect(url_for('index'))
 
     form = LoginForm()
     if form.validate_on_submit():
         user = Login.query.filter_by(email=form.email.data).first()
-        if user and user.check_password(form.password.data):
+        if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember.data)
             flash('Login successful!', 'success')
             next_page = request.args.get('next')
+            # If user is a Webmaster, redirect to manage_art
             if user.role == 'Webmaster':
                 return redirect(next_page) if next_page else redirect(url_for('manage_art'))
             else:
@@ -111,6 +112,7 @@ def login():
         else:
             flash('Login failed. Check your email and/or password', 'danger')
     return render_template('login.html', form=form)
+
 
 
 
@@ -157,17 +159,23 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
+    
+
 @app.route('/manage_art', methods=['GET', 'POST'])
 @login_required
 def manage_art():
-    print("Entered the manage_art route")  # Debugging step
-    form = MinimalForm()  # Using the minimal form
+    if current_user.role != 'Webmaster':
+        flash('You do not have permission to access this page.', 'danger')
+        return redirect(url_for('index'))
+
+    form = ManageArtForm()  
 
     if form.validate_on_submit():
         flash('Form submitted successfully!', 'success')
         return redirect(url_for('manage_art'))
 
     return render_template('art.html', form=form)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

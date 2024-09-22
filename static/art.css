@@ -1,16 +1,116 @@
-/* Add margin to push the form below the slideshow */
-.form-container {
-  position: relative;
-  margin-top: 30px; /* Adjust this as needed to create enough space below the slideshow */
-  background-color: white;
+/* General form styling for the Manage Art form */
+.manage-art-form {
+  position: relative; /* Ensure the form is positioned relative to other elements */
+  margin-top: 100px; /* Increased margin to ensure it's below the slideshow */
+  background-color: #f9f5ef; /* Soft background color resembling canvas paper */
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px; /* Rounded corners for a smoother look */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Adds a shadow for visual separation */
+  z-index: 1; /* No need for higher z-index, as it's below the slideshow */
+  font-family: "Georgia", serif; /* Elegant serif font for a classic look */
 }
 
-/* Ensure the slideshow from base.html is properly placed */
+/* Slideshow container styling */
 .slideshow-container {
   width: 100%;
-  height: 400px; /* Adjust as needed */
-  margin-bottom: 30px; /* Ensure there's space between the slideshow and the content below */
+  height: 400px; /* Adjust height as necessary */
+  margin-bottom: 100px; /* Adds enough space below the slideshow */
+  position: relative; /* Keep the position of the slideshow relative */
+  z-index: 10; /* Ensure slideshow is above lower content */
+}
+
+/* Description section styling */
+.description-section {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow to the description */
+}
+
+.description-section h2 {
+  font-family: Arial, sans-serif;
+  color: #8b4513;
+}
+
+.description-section p {
+  font-family: Arial, sans-serif;
+  color: #5a5a5a;
+}
+
+/* Form heading with fallback fonts */
+.manage-art-form h3 {
+  font-family: "Brush Script MT", cursive, "Pacifico", "Comic Sans MS",
+    sans-serif;
+  font-size: 2rem;
+  color: #8b4513;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Form labels */
+.manage-art-form .form-label {
+  font-size: 1rem;
+  color: #5a5a5a;
+  font-weight: bold;
+}
+
+/* Form fields */
+.manage-art-form .form-control {
+  border: 1px solid #d4b483;
+  background-color: #fff5e1; /* Light background for inputs */
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+/* Date and other fields */
+.manage-art-form .form-control[type="date"] {
+  background-color: #fff; /* Date picker specific styling */
+  border: 1px solid #d4b483;
+}
+
+/* Button styling */
+.manage-art-form .btn-primary {
+  background-color: #8b4513; /* Warm, earthy tone for the button */
+  border-color: #8b4513;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.manage-art-form .btn-primary:hover {
+  background-color: #a0522d; /* Darker on hover for contrast */
+  border-color: #a0522d;
+}
+
+/* Picture upload section */
+.manage-art-form .form-control-file {
+  background-color: #f9f5ef;
+  border: 1px solid #d4b483;
+}
+
+/* Error messages */
+.manage-art-form .text-danger {
+  font-size: 0.9rem;
+  color: #ff4d4d;
+}
+
+/* Body styling for the entire art page */
+body {
+  background-color: #f2efe6; /* Soft beige background for the entire page */
+  font-family: Arial, sans-serif; /* Use Arial as the default font for non-form content */
+  padding-top: 20px;
+}
+
+.navbar {
+  position: relative; /* Ensure proper positioning */
+  z-index: 20;
+  font-family: Arial, sans-serif; /* Set higher z-index than slideshow */
+}
+
+/* Ensure the dropdown menu is positioned correctly */
+.navbar .dropdown-menu {
+  z-index: 30; /* Set even higher z-index for the dropdown */
 }

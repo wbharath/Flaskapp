@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, RadioField, SelectField, DecimalField, FileField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, RadioField, SelectField, DecimalField, FileField, DateField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from flask_wtf.file import FileAllowed
 
@@ -8,7 +8,6 @@ from flask_wtf.file import FileAllowed
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    role = SelectField('Role', choices=[('User', 'User'), ('Webmaster', 'Webmaster')], validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
@@ -54,8 +53,12 @@ class ContactForm(FlaskForm):
 class ManageArtForm(FlaskForm):
     title = StringField('Art Title', validators=[DataRequired()])
     artist_name = StringField('Artist Name', validators=[DataRequired()])
-    artist_birth = StringField('Artist Birth', validators=[DataRequired()])
-    artist_death = StringField('Artist Death')
+    
+    # Date fields for birth and death
+    artist_birth = DateField('Artist Birth', format='%Y-%m-%d', validators=[DataRequired()])
+    is_deceased = BooleanField('Deceased')  # Checkbox for deceased status
+    artist_death = DateField('Artist Death', format='%Y-%m-%d')  # Optional death date
+    
     email = StringField('Artist Email', validators=[Email()])
     phone = StringField('Phone Number')
     nscc_location = StringField('NSCC Location', validators=[DataRequired()])
@@ -65,8 +68,4 @@ class ManageArtForm(FlaskForm):
     relevant_contact_info = StringField('Relevant Contact Info', validators=[DataRequired()])
     provenance = StringField('Provenance')
     picture = FileField('Art Image', validators=[FileAllowed(['jpg', 'png'], 'Images only!')])
-
-
-class MinimalForm(FlaskForm):
-    title = StringField('Art Title')
     submit = SubmitField('Submit')
