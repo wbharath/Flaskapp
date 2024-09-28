@@ -8,25 +8,90 @@ content %}
     <p>If you have any inquiries, please fill out and submit the form below:</p>
     <form method="post" action="{{ url_for('contact') }}">
       {{ form.hidden_tag() }}
-      <!-- Your form fields go here -->
+
+      <!-- Name Field -->
       <div class="form-group">
         {{ form.name.label(class="form-label") }} {{
         form.name(class="form-control") }}
       </div>
+
+      <!-- Email Field -->
       <div class="form-group">
         {{ form.email.label(class="form-label") }} {{
         form.email(class="form-control") }}
       </div>
+
+      <!-- Message Field -->
       <div class="form-group">
         {{ form.message.label(class="form-label") }} {{
         form.message(class="form-control") }}
       </div>
+
+      <!-- Status Field (Radio Buttons) -->
       <div class="form-group">
         {{ form.status.label(class="form-label") }}<br />
         {{ form.status() }}
         <!-- This will render radio buttons -->
       </div>
 
+      <!-- Dropdown for NSCC Campuses -->
+      <div class="form-group">
+        <label for="campus">Select NSCC Campus:</label>
+        <select name="campus" id="campus" class="form-control" required>
+          <option value="">-- Select a Campus --</option>
+          <option value="Akerley Campus (Dartmouth, NS)">
+            Akerley Campus (Dartmouth, NS)
+          </option>
+          <option value="Amherst Learning Centre (Amherst, NS)">
+            Amherst Learning Centre (Amherst, NS)
+          </option>
+          <option value="Annapolis Valley Campus (Middleton, NS)">
+            Annapolis Valley Campus (Middleton, NS)
+          </option>
+          <option value="Burridge Campus (Yarmouth, NS)">
+            Burridge Campus (Yarmouth, NS)
+          </option>
+          <option value="Centre of Geographic Sciences (Lawrencetown, NS)">
+            Centre of Geographic Sciences (Lawrencetown, NS)
+          </option>
+          <option value="Cumberland Campus (Springhill, NS)">
+            Cumberland Campus (Springhill, NS)
+          </option>
+          <option value="Digby Learning Centre (Digby, NS)">
+            Digby Learning Centre (Digby, NS)
+          </option>
+          <option value="eCampus (Online)">eCampus (Online)</option>
+          <option value="Institute of Technology Campus (Halifax, NS)">
+            Institute of Technology Campus (Halifax, NS)
+          </option>
+          <option value="Ivany Campus (Dartmouth, NS)">
+            Ivany Campus (Dartmouth, NS)
+          </option>
+          <option value="Kingstec Campus (Kentville, NS)">
+            Kingstec Campus (Kentville, NS)
+          </option>
+          <option value="Lunenburg Campus (Bridgewater, NS)">
+            Lunenburg Campus (Bridgewater, NS)
+          </option>
+          <option value="Pictou Campus (Stellarton, NS)">
+            Pictou Campus (Stellarton, NS)
+          </option>
+          <option value="Shelburne Campus (Shelburne, NS)">
+            Shelburne Campus (Shelburne, NS)
+          </option>
+          <option value="Strait Area Campus (Port Hawkesbury, NS)">
+            Strait Area Campus (Port Hawkesbury, NS)
+          </option>
+          <option value="Sydney Waterfront Campus (Sydney, NS)">
+            Sydney Waterfront Campus (Sydney, NS)
+          </option>
+          <option value="Truro Campus (Truro, NS)">
+            Truro Campus (Truro, NS)
+          </option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>

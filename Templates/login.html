@@ -11,6 +11,7 @@
 >
   <div class="modal-dialog">
     <div class="modal-content">
+      <!-- Modal Header -->
       <div class="modal-header">
         <h5 class="modal-title" id="loginModalLabel">Login</h5>
         <button
@@ -20,26 +21,20 @@
           aria-label="Close"
         ></button>
       </div>
+      <!-- Modal Body -->
       <div class="modal-body">
-        <form method="POST" action="/login">
+        <form method="POST" action="{{ url_for('login') }}">
           {{ form.hidden_tag() }}
           <div class="mb-3">
             {{ form.email.label(class="form-label") }} {{
-            form.email(class="form-control") }} {% for error in
-            form.email.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
+            form.email(class="form-control") }}
           </div>
           <div class="mb-3">
             {{ form.password.label(class="form-label") }} {{
-            form.password(class="form-control") }} {% for error in
-            form.password.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
+            form.password(class="form-control") }}
           </div>
-          <div class="mb-3 form-check">
-            {{ form.remember(class="form-check-input") }} {{
-            form.remember.label(class="form-check-label") }}
+          <div class="mb-3">
+            {{ form.remember.label() }} {{ form.remember() }}
           </div>
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
@@ -48,15 +43,11 @@
   </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+{% if not current_user.is_authenticated %}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
     loginModal.show();
   });
 </script>
-
-{% endblock %}
+{% endif %} {% endblock %}
