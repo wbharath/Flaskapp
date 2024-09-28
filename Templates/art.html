@@ -54,23 +54,30 @@
     <div class="form-group" id="death-date-group" style="display: none">
       {{ form.artist_death.label(class="form-label") }} {{
       form.artist_death(class="form-control", type="date", id="artist_death") }}
-      <small class="text-danger" id="dob-dod-error" style="display: none"
-        >Date of birth cannot be greater than date of death.</small
-      >
+      <small class="text-danger" id="dob-dod-error" style="display: none">
+        Date of birth cannot be greater than date of death.
+      </small>
     </div>
     <div class="form-group">
       {{ form.email.label(class="form-label") }} {{
-      form.email(class="form-control") }}
+      form.email(class="form-control") }} {% for error in form.email.errors %}
+      <span class="text-danger">{{ error }}</span>
+      {% endfor %}
     </div>
     <div class="form-group">
       {{ form.phone.label(class="form-label") }} {{
-      form.phone(class="form-control") }}
+      form.phone(class="form-control") }} {% for error in form.phone.errors %}
+      <span class="text-danger">{{ error }}</span>
+      {% endfor %}
     </div>
 
     <!-- Value Information -->
     <div class="form-group">
       {{ form.nscc_location.label(class="form-label") }} {{
-      form.nscc_location(class="form-control") }}
+      form.nscc_location(class="form-control") }} {% for error in
+      form.nscc_location.errors %}
+      <span class="text-danger">{{ error }}</span>
+      {% endfor %}
     </div>
     <div class="form-group">
       {{ form.initial_appraisal.label(class="form-label") }} {{

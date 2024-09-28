@@ -1,22 +1,22 @@
 /* General form styling for the Manage Art form */
 .manage-art-form {
-  position: relative; /* Ensure the form is positioned relative to other elements */
-  margin-top: 100px; /* Increased margin to ensure it's below the slideshow */
-  background-color: #f9f5ef; /* Soft background color resembling canvas paper */
+  position: relative;
+  margin-top: 100px;
+  background-color: #f9f5ef;
   padding: 20px;
-  border-radius: 10px; /* Rounded corners for a smoother look */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Adds a shadow for visual separation */
-  z-index: 1; /* No need for higher z-index, as it's below the slideshow */
-  font-family: "Georgia", serif; /* Elegant serif font for a classic look */
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  font-family: "Georgia", serif;
 }
 
 /* Slideshow container styling */
 .slideshow-container {
   width: 100%;
-  height: 400px; /* Adjust height as necessary */
-  margin-bottom: 100px; /* Adds enough space below the slideshow */
-  position: relative; /* Keep the position of the slideshow relative */
-  z-index: 10; /* Ensure slideshow is above lower content */
+  height: 400px;
+  margin-bottom: 100px;
+  position: relative;
+  z-index: 10;
 }
 
 /* Description section styling */
@@ -25,7 +25,7 @@
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow to the description */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .description-section h2 {
@@ -58,21 +58,33 @@
 /* Form fields */
 .manage-art-form .form-control {
   border: 1px solid #d4b483;
-  background-color: #fff5e1; /* Light background for inputs */
+  background-color: #fff5e1;
   padding: 12px;
   border-radius: 5px;
   margin-bottom: 15px;
 }
 
+/* Specific styling for the SelectField (location) */
+.manage-art-form select.form-control {
+  height: auto;
+  padding: 10px;
+  font-size: 1rem;
+  line-height: 1.5;
+  background-color: #fff5e1;
+  border: 1px solid #d4b483;
+  border-radius: 5px;
+  appearance: none; /* For custom styling */
+}
+
 /* Date and other fields */
 .manage-art-form .form-control[type="date"] {
-  background-color: #fff; /* Date picker specific styling */
+  background-color: #fff;
   border: 1px solid #d4b483;
 }
 
 /* Button styling */
 .manage-art-form .btn-primary {
-  background-color: #8b4513; /* Warm, earthy tone for the button */
+  background-color: #8b4513;
   border-color: #8b4513;
   padding: 10px 20px;
   font-size: 1.1rem;
@@ -81,7 +93,7 @@
 }
 
 .manage-art-form .btn-primary:hover {
-  background-color: #a0522d; /* Darker on hover for contrast */
+  background-color: #a0522d;
   border-color: #a0522d;
 }
 
@@ -99,18 +111,26 @@
 
 /* Body styling for the entire art page */
 body {
-  background-color: #f2efe6; /* Soft beige background for the entire page */
-  font-family: Arial, sans-serif; /* Use Arial as the default font for non-form content */
+  background-color: #f2efe6;
+  font-family: Arial, sans-serif;
   padding-top: 20px;
 }
 
 .navbar {
-  position: relative; /* Ensure proper positioning */
+  position: relative;
   z-index: 20;
-  font-family: Arial, sans-serif; /* Set higher z-index than slideshow */
+  font-family: Arial, sans-serif;
 }
 
 /* Ensure the dropdown menu is positioned correctly */
 .navbar .dropdown-menu {
-  z-index: 30; /* Set even higher z-index for the dropdown */
+  z-index: 30;
+}
+
+/* Styling for SelectField with longer text */
+.manage-art-form select.form-control {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

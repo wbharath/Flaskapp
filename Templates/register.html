@@ -1,69 +1,86 @@
-{% extends "base.html" %} {% block content %}
-<h1>Register</h1>
-
+{% extends "base.html" %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='register.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+/>
+<style>
+  /* Override the default container margin */
+  .container {
+    margin-top: 0 !important;
+  }
+</style>
+{% endblock %} {% block content %}
 <div
-  class="modal fade show"
-  id="registerModal"
-  tabindex="-1"
-  aria-labelledby="registerModalLabel"
-  aria-hidden="true"
-  style="display: block"
+  class="d-flex justify-content-center align-items-center"
+  style="min-height: 100vh"
 >
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="registerModalLabel">Register</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+  <div class="login-container">
+    <div class="row">
+      <!-- Side Image Section (now on the left) -->
+      <div class="col-md-6">
+        <div class="cover">
+          <img
+            src="{{ url_for('static', filename='images/b.jpg') }}"
+            alt="Side Image"
+            class="img-fluid"
+          />
+        </div>
+
+        <!-- Welcome Message Section -->
+        <div class="welcome-message">
+          <h5>Join the NSCC ART Foundation</h5>
+          <p>
+            We are passionate about promoting art and talent. Become a part of
+            our growing community of artists by signing up today!
+          </p>
+        </div>
       </div>
-      <div class="modal-body">
-        <form method="POST">
+
+      <!-- Register Form -->
+      <div class="col-md-6 d-flex flex-column justify-content-center">
+        <h2 class="mb-4">Sign Up</h2>
+        <form method="POST" action="{{ url_for('register') }}">
           {{ form.hidden_tag() }}
-          <div class="mb-3">
-            {{ form.username.label(class="form-label") }} {{
-            form.username(class="form-control") }} {% for error in
-            form.username.errors %}
+          <div class="input-box mb-3">
+            <i class="fas fa-user"></i>
+            {{ form.username(class="form-control", placeholder="Enter your username", required=True) }} {% for error in form.username.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
           </div>
-          <div class="mb-3">
-            {{ form.email.label(class="form-label") }} {{
-            form.email(class="form-control") }} {% for error in
-            form.email.errors %}
+          <div class="input-box mb-3">
+            <i class="fas fa-envelope"></i>
+            {{ form.email(class="form-control", placeholder="Enter your email",required=True) }} {% for error in form.email.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
           </div>
-          <div class="mb-3">
-            {{ form.password.label(class="form-label") }} {{
-            form.password(class="form-control") }} {% for error in
-            form.password.errors %}
+          <div class="input-box mb-3">
+            <i class="fas fa-lock"></i>
+            {{ form.password(class="form-control", placeholder="Enter your password", required=True) }} {% for error in form.password.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
           </div>
-          <div class="mb-3">
-            {{ form.confirm_password.label(class="form-label") }} {{
-            form.confirm_password(class="form-control") }} {% for error in
+          <div class="input-box mb-3">
+            <i class="fas fa-lock"></i>
+            {{ form.confirm_password(class="form-control", placeholder="Confirm your password", required=True) }} {% for error in
             form.confirm_password.errors %}
             <span class="text-danger">{{ error }}</span>
             {% endfor %}
           </div>
-          <button type="submit" class="btn btn-primary">Register</button>
+          <button type="submit" class="btn btn-primary btn-block">
+            Sign Up
+          </button>
         </form>
+        <div class="text-center mt-3">
+          <a href="{{ url_for('login') }}" class="sign-up-link"
+            >Already have an account? Login</a
+          >
+        </div>
       </div>
     </div>
   </div>
 </div>
-
-<script>
-  window.onload = function () {
-    var registerModal = new bootstrap.Modal(
-      document.getElementById("registerModal")
-    );
-    registerModal.show();
-  };
-</script>
 {% endblock %}

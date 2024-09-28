@@ -7,8 +7,8 @@ class Login(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    role = db.Column(db.String(64), nullable=False, default='User')
+    password_hash = db.Column(db.String(512), nullable=False)
+    role = db.Column(db.String(50), nullable=False, default='User')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -21,33 +21,34 @@ class Artist(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     artist_name = db.Column(db.String(255), nullable=False)
-    artist_birth = db.Column(db.Date)
-    artist_death = db.Column(db.Date)
-    email = db.Column(db.String(255))
-    phone = db.Column(db.String(50))
+    artist_birth = db.Column(db.Date, nullable=False)  # Ensuring non-nullable
+    artist_death = db.Column(db.Date, nullable=True)  # Optional field
+    email = db.Column(db.String(255), nullable=True)
+    phone = db.Column(db.String(50), nullable=True)
 
     # Relationships
     pictures = db.relationship('Picture', backref='artist', lazy=True)
+
+class Value(db.Model):
+    __tablename__ = 'value'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nscc_location = db.Column(db.String(255), nullable=False)
+    initial_appraisal = db.Column(db.Numeric(10, 2), nullable=False)
+    new_appraisal = db.Column(db.Numeric(10, 2), nullable=True)  # Optional field
+    purchase_price = db.Column(db.Numeric(10, 2), nullable=False)
+    relevant_contact_info = db.Column(db.String(255), nullable=True)
+    provenance = db.Column(db.Text, nullable=True)
+
+    # Relationships
+    pictures = db.relationship('Picture', backref='value', lazy=True)
 
 class Picture(db.Model):
     __tablename__ = 'picture'
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'))
-    value_id = db.Column(db.Integer, db.ForeignKey('value.id'))
-    created_at = db.Column(db.Date)
-
-class Value(db.Model):
-    __tablename__ = 'value'
-
-    id = db.Column(db.Integer, primary_key=True)
-    nscc_location = db.Column(db.String(255))
-    initial_appraisal = db.Column(db.Numeric(10, 2))
-    new_appraisal = db.Column(db.Numeric(10, 2))
-    purchase_price = db.Column(db.Numeric(10, 2))
-    relevant_contact_info = db.Column(db.String(255))
-    provenance = db.Column(db.Text)
-
-    # Relationships
-    pictures = db.relationship('Picture', backref='value', lazy=True)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
+    value_id = db.Column(db.Integer, db.ForeignKey('value.id'), nullable=False)
+    created_at = db.Column(db.Date, nullable=False)
+    image_path = db.Column(db.String(255), nullable=False)
