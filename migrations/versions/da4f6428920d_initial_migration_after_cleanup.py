@@ -1,8 +1,8 @@
-"""Create login, artist, picture, and value tables
+"""Initial migration after cleanup
 
-Revision ID: f4f17e4b3fd5
+Revision ID: da4f6428920d
 Revises: 
-Create Date: 2024-09-20 19:12:03.326940
+Create Date: 2024-09-22 12:21:17.777380
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f4f17e4b3fd5'
+revision = 'da4f6428920d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('artist',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('artist_name', sa.String(length=255), nullable=False),
-    sa.Column('artist_birth', sa.Date(), nullable=True),
+    sa.Column('artist_birth', sa.Date(), nullable=False),
     sa.Column('artist_death', sa.Date(), nullable=True),
     sa.Column('email', sa.String(length=255), nullable=True),
     sa.Column('phone', sa.String(length=50), nullable=True),
@@ -29,20 +29,19 @@ def upgrade():
     )
     op.create_table('login',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=80), nullable=False),
+    sa.Column('username', sa.String(length=64), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password_hash', sa.String(length=512), nullable=False),
-    sa.Column('role', sa.String(length=50), nullable=True),
+    sa.Column('role', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('username')
+    sa.UniqueConstraint('email')
     )
     op.create_table('value',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('nscc_location', sa.String(length=255), nullable=True),
-    sa.Column('initial_appraisal', sa.Numeric(precision=10, scale=2), nullable=True),
+    sa.Column('nscc_location', sa.String(length=255), nullable=False),
+    sa.Column('initial_appraisal', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('new_appraisal', sa.Numeric(precision=10, scale=2), nullable=True),
-    sa.Column('purchase_price', sa.Numeric(precision=10, scale=2), nullable=True),
+    sa.Column('purchase_price', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('relevant_contact_info', sa.String(length=255), nullable=True),
     sa.Column('provenance', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id')
@@ -50,9 +49,9 @@ def upgrade():
     op.create_table('picture',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=255), nullable=False),
-    sa.Column('artist_id', sa.Integer(), nullable=True),
-    sa.Column('value_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.Date(), nullable=True),
+    sa.Column('artist_id', sa.Integer(), nullable=False),
+    sa.Column('value_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.Date(), nullable=False),
     sa.ForeignKeyConstraint(['artist_id'], ['artist.id'], ),
     sa.ForeignKeyConstraint(['value_id'], ['value.id'], ),
     sa.PrimaryKeyConstraint('id')

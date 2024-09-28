@@ -60,11 +60,18 @@ def load_user(user_id):
 def home_redirect():
     return redirect(url_for('register'))
 
+# app.py or your views.py
+from flask import render_template
+from models import Picture, Artist, Value
+
 @app.route('/home')
 def index():
-    # Assuming you have an Item model
-    # items = Item.query.all()  # Uncomment if Item model exists
-    return render_template('index.html')  # , items=items)
+    # Query all the pictures and their related artist and value info
+    pictures = Picture.query.join(Artist).join(Value).all()
+    
+    # Pass the data to the template
+    return render_template('index.html', pictures=pictures)
+
 
 
 
@@ -84,7 +91,7 @@ def register():
             username=form.username.data,
             email=form.email.data,
             password_hash=hashed_password,
-            role='User'  # Default role
+            # role='User'  # Default role
         )
         db.session.add(user)
         db.session.commit()
@@ -129,7 +136,7 @@ def contact():
         
         msg = Message('Contact Form Message',
                       sender=email,
-                      recipients=['your_email@example.com'])  # Replace with your email
+                      recipients=['bharadwajdurgasai@gmail.com.com']) 
         msg.body = f'''
         Message from {name} ({email}):
         
@@ -159,23 +166,68 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
-    
+
 
 @app.route('/manage_art', methods=['GET', 'POST'])
 @login_required
 def manage_art():
+    # Only allow Webmaster to access this page
     if current_user.role != 'Webmaster':
         flash('You do not have permission to access this page.', 'danger')
         return redirect(url_for('index'))
 
-    form = ManageArtForm()  
+    form = ManageArtForm()
 
     if form.validate_on_submit():
-        flash('Form submitted successfully!', 'success')
+        # Step 1: Save artist information
+        artist = Artist(
+            artist_name=form.artist_name.data,
+            artist_birth=form.artist_birth.data,
+            artist_death=form.artist_death.data if form.is_deceased.data else None,
+            email=form.email.data,
+            phone=form.phone.data
+        )
+        db.session.add(artist)
+        db.session.commit()
+
+        # Step 2: Save value information
+        value = Value(
+            nscc_location=form.nscc_location.data,
+            initial_appraisal=form.initial_appraisal.data,
+            new_appraisal=form.new_appraisal.data,
+            purchase_price=form.purchase_price.data,
+            relevant_contact_info=form.relevant_contact_info.data,
+            provenance=form.provenance.data
+        )
+        db.session.add(value)
+        db.session.commit()
+
+        # Step 3: Save picture information and handle image upload
+        if form.picture.data:
+            filename = secure_filename(form.picture.data.filename)
+            picture_path = os.path.join('static/images', filename)
+            form.picture.data.save(picture_path)
+
+            picture = Picture(
+                title=form.title.data,
+                artist_id=artist.id,  # Link to artist table
+                value_id=value.id,    # Link to value table
+                created_at=datetime.utcnow(),
+                image_path=f'images/{filename}'  # Store the relative path
+            )
+            db.session.add(picture)
+            db.session.commit()
+
+            flash('Art has been successfully uploaded!', 'success')
+        else:
+            flash('Please upload an image.', 'danger')
+
         return redirect(url_for('manage_art'))
 
     return render_template('art.html', form=form)
 
+
+print(f"SECRET_KEY: {app.config['SECRET_KEY']}")
 
 if __name__ == '__main__':
     app.run(debug=True)

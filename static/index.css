@@ -8,9 +8,10 @@ body {
 }
 
 /* Header styles */
+/* Header styles */
 header {
   background-color: #004477; /* Light background for the header */
-  padding: 1rem;
+  padding: 0.1rem !important; /* Reduced padding to decrease height */
   position: fixed;
   width: 100%;
   top: 0;
@@ -104,4 +105,12 @@ header {
 
 .btn-primary {
   margin-top: 10px;
+}
+.card-img-top {
+  width: 300px; /* Set a fixed width */
+  height: 300px; /* Set a fixed height */
+  object-fit: cover; /* Ensures the image maintains aspect ratio and covers the box */
+  border-radius: 8px; /* Optional: Add a border-radius for rounded corners */
+  display: block;
+  margin: 0 auto; /* Center the image */
 }
