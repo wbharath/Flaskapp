@@ -114,3 +114,31 @@ header {
   display: block;
   margin: 0 auto; /* Center the image */
 }
+/* Fix for flash messages positioning */
+.flash-container {
+  position: relative;
+  z-index: 9999;
+  margin-top: 20px; /* Adjust this value to add space below the navbar */
+  padding: 10px;
+}
+
+.flash-message {
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.flash-message.alert {
+  margin-bottom: 0; /* Ensure no margin issue with the top spacing */
+}
+
+/* Example for the alert colors, adjust accordingly */
+.flash-message.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.flash-message.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}

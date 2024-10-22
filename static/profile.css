@@ -1,0 +1,82 @@
+/* Profile Container Styling */
+.profile-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  position: relative; /* So the arrow button stays in place */
+}
+
+/* Back Button Styling */
+.back-btn {
+  font-size: 1.1rem;
+  color: #004477;
+  text-decoration: none;
+  margin-bottom: 20px;
+  display: inline-block;
+  position: absolute; /* Positioned at the top left */
+  top: 15px;
+  left: 15px;
+}
+
+.back-btn i {
+  margin-right: 5px;
+  font-size: 1.5rem; /* Size of the arrow */
+}
+
+/* Form Label and Input Styles */
+.form-group label {
+  font-weight: bold;
+  color: #004477;
+}
+
+.form-control {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+}
+
+/* Update Button Styling */
+.btn-primary {
+  background-color: #004477;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 1.1rem;
+}
+
+.btn-primary:hover {
+  background-color: #004477;
+}
+
+.profile-container h2 {
+  color: #004477;
+}
+/* Styling for flash messages */
+.alert {
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+}
+
+.alert-success {
+  background-color: #004477; /* Matching the primary blue color */
+}
+
+.alert-danger {
+  background-color: #dc3545;
+}
+
+.alert-warning {
+  background-color: #ffc107;
+  color: #343a40; /* Making the text dark for better visibility */
+}
+
+.alert-info {
+  background-color: #17a2b8;
+}

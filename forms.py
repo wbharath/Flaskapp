@@ -99,3 +99,19 @@ class ManageArtForm(FlaskForm):
     picture = FileField('Art Image', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     
     submit = SubmitField('Submit')
+
+class UpdateProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    
+    # Add the current password field to verify identity
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+
+    # Add new password fields for updating the password
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField(
+        'Confirm New Password',
+        validators=[DataRequired(), EqualTo('password', message='Passwords must match')]
+    )
+
+    submit = SubmitField('Update Profile')
