@@ -10,6 +10,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
+import bleach
+from werkzeug.utils import secure_filename
+
 
 # Load environment variables
 load_dotenv()
@@ -95,7 +98,6 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
-# Route for user login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -104,7 +106,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = Login.query.filter_by(email=form.email.data).first()
-        if user and check_password_hash(user.password_hash, form.password.data):
+        
+        if user is None:
+            flash("Email doesn't exist, please register", 'warning')
+        elif user and check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember.data, duration=timedelta(hours=1))  # Secure session duration
             flash('Login successful!', 'success')
 
@@ -119,6 +124,7 @@ def login():
                 return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             flash('Login failed. Check your email and/or password', 'danger')
+
     return render_template('login.html', form=form)
 
 # Route for contact form
@@ -159,46 +165,69 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
-# Route to manage art (only accessible by Webmaster)
+
+
 @app.route('/manage_art', methods=['GET', 'POST'])
 @login_required
 def manage_art():
     print(f"Current user ID: {current_user.id}")
     print(f"Current user role: {current_user.role}")
+    
     if current_user.role.strip().lower() != 'webmaster':
         flash('You do not have permission to access this page.', 'danger')
         return redirect(url_for('index'))
 
     form = ManageArtForm()
+
+    # Check if the form is submitted and valid
     if form.validate_on_submit():
+        # Sanitize artist fields (excluding date fields)
+        artist_name = bleach.clean(form.artist_name.data, tags=[], strip=True)
+        artist_birth = form.artist_birth.data  # Do not sanitize date fields
+        artist_death = form.artist_death.data if form.is_deceased.data else None  # Do not sanitize date fields
+        email = bleach.clean(form.email.data, tags=[], strip=True)
+        phone = bleach.clean(form.phone.data, tags=[], strip=True)
+
         artist = Artist(
-            artist_name=form.artist_name.data,
-            artist_birth=form.artist_birth.data,
-            artist_death=form.artist_death.data if form.is_deceased.data else None,
-            email=form.email.data,
-            phone=form.phone.data
+            artist_name=artist_name,
+            artist_birth=artist_birth,
+            artist_death=artist_death,
+            email=email,
+            phone=phone
         )
         db.session.add(artist)
         db.session.commit()
 
+        # Do not sanitize decimal fields, just store them directly
+        nscc_location = bleach.clean(form.nscc_location.data, tags=[], strip=True)
+        initial_appraisal = form.initial_appraisal.data  # Do not sanitize decimal fields
+        new_appraisal = form.new_appraisal.data  # Do not sanitize decimal fields
+        purchase_price = form.purchase_price.data  # Do not sanitize decimal fields
+        relevant_contact_info = bleach.clean(form.relevant_contact_info.data, tags=[], strip=True)
+        provenance = bleach.clean(form.provenance.data, tags=[], strip=True)
+
         value = Value(
-            nscc_location=form.nscc_location.data,
-            initial_appraisal=form.initial_appraisal.data,
-            new_appraisal=form.new_appraisal.data,
-            purchase_price=form.purchase_price.data,
-            relevant_contact_info=form.relevant_contact_info.data,
-            provenance=form.provenance.data
+            nscc_location=nscc_location,
+            initial_appraisal=initial_appraisal,
+            new_appraisal=new_appraisal,
+            purchase_price=purchase_price,
+            relevant_contact_info=relevant_contact_info,
+            provenance=provenance
         )
         db.session.add(value)
         db.session.commit()
 
+        # Handle picture upload and picture data
         if form.picture.data:
             filename = secure_filename(form.picture.data.filename)
             picture_path = os.path.join('static/images', filename)
             form.picture.data.save(picture_path)
 
+            # Sanitize picture title
+            title = bleach.clean(form.title.data, tags=[], strip=True)
+
             picture = Picture(
-                title=form.title.data,
+                title=title,
                 artist_id=artist.id,
                 value_id=value.id,
                 created_at=datetime.utcnow(),
@@ -212,6 +241,11 @@ def manage_art():
             flash('Please upload an image.', 'danger')
 
         return redirect(url_for('manage_art'))
+
+    else:
+        # If form validation fails, print the errors and show a flash message
+        print(form.errors)  # Log form errors to console for debugging
+        flash('There was an error in the form. Please check the fields below.', 'danger')
 
     return render_template('art.html', form=form)
 

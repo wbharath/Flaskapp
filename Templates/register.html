@@ -1,42 +1,32 @@
-{% extends "base.html" %} {% block extra_css %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='register.css') }}"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-/>
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 <style>
   /* Override the default container margin */
   .container {
     margin-top: 0 !important;
   }
+
 </style>
-{% endblock %} {% block content %}
-<div
-  class="d-flex justify-content-center align-items-center"
-  style="min-height: 100vh"
->
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh">
   <div class="login-container">
     <div class="row">
       <!-- Side Image Section (now on the left) -->
       <div class="col-md-6">
         <div class="cover">
-          <img
-            src="{{ url_for('static', filename='images/b.jpg') }}"
-            alt="Side Image"
-            class="img-fluid"
-          />
+          <img src="{{ url_for('static', filename='images/b.jpg') }}" alt="Side Image" class="img-fluid" />
         </div>
 
         <!-- Welcome Message Section -->
         <div class="welcome-message">
           <h5>Join the NSCC ART Foundation</h5>
-          <p>
-            We are passionate about promoting art and talent. Become a part of
-            our growing community of artists by signing up today!
-          </p>
+          <p>We are passionate about promoting art and talent. Become a part of our growing community of artists by
+            signing up today!</p>
         </div>
       </div>
 
@@ -45,39 +35,63 @@
         <h2 class="mb-4">Sign Up</h2>
         <form method="POST" action="{{ url_for('register') }}">
           {{ form.hidden_tag() }}
-          <div class="input-box mb-3">
-            <i class="fas fa-user"></i>
-            {{ form.username(class="form-control", placeholder="Enter your username", required=True) }} {% for error in form.username.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
+
+          <!-- Username Input Group -->
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-user"></i>
+              </span>
+            </div>
+            {{ form.username(class="form-control", placeholder="Enter your username", required=True) }}
           </div>
-          <div class="input-box mb-3">
-            <i class="fas fa-envelope"></i>
-            {{ form.email(class="form-control", placeholder="Enter your email",required=True) }} {% for error in form.email.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
+          {% for error in form.username.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+
+          <!-- Email Input Group -->
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-envelope"></i>
+              </span>
+            </div>
+            {{ form.email(class="form-control", placeholder="Enter your email", required=True) }}
           </div>
-          <div class="input-box mb-3">
-            <i class="fas fa-lock"></i>
-            {{ form.password(class="form-control", placeholder="Enter your password", required=True) }} {% for error in form.password.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
+          {% for error in form.email.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+
+          <!-- Password Input Group -->
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+              </span>
+            </div>
+            {{ form.password(class="form-control", placeholder="Enter your password", required=True) }}
           </div>
-          <div class="input-box mb-3">
-            <i class="fas fa-lock"></i>
-            {{ form.confirm_password(class="form-control", placeholder="Confirm your password", required=True) }} {% for error in
-            form.confirm_password.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
+          {% for error in form.password.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+
+          <!-- Confirm Password Input Group -->
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+              </span>
+            </div>
+            {{ form.confirm_password(class="form-control", placeholder="Confirm your password", required=True) }}
           </div>
-          <button type="submit" class="btn btn-primary btn-block">
-            Sign Up
-          </button>
+          {% for error in form.confirm_password.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+
+          <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
         </form>
         <div class="text-center mt-3">
-          <a href="{{ url_for('login') }}" class="sign-up-link"
-            >Already have an account? Login</a
-          >
+          <a href="{{ url_for('login') }}" class="sign-up-link">Already have an account? Login</a>
         </div>
       </div>
     </div>
