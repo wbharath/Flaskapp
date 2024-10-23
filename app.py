@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 import os
 import bleach
 from werkzeug.utils import secure_filename
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 
 # Load environment variables
@@ -62,6 +64,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Set up Flask-Limiter for rate limiting
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]  # Global rate limits (can be adjusted)
+)
+
 # Import database models after initializing db
 with app.app_context():
     from models import Login, Artist, Picture, Value  # Ensure models are imported after db is initialized
@@ -86,6 +95,7 @@ def index():
 
 # Route for user registration
 @app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -99,6 +109,7 @@ def register():
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -129,6 +140,7 @@ def login():
 
 # Route for contact form
 @app.route('/contact', methods=['GET', 'POST'])
+@limiter.limit("3 per minute")
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
@@ -164,6 +176,10 @@ def logout():
     session.clear()  # Clear all session data
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    return render_template("429.html", message="Too many requests. Please try again later."), 429
 
 
 
