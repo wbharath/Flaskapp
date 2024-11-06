@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentication</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- Include any other CSS libraries if needed -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+    <div class="container">
+        <div class="card" id="card">
+            <!-- Front Side (Login Form) -->
+            <div class="front">
+                <div class="content">
+                    <h2>Login</h2>
+                    <!-- Flash messages -->
+                    {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="{{ url_for('login') }}">
+                        {{ login_form.hidden_tag() }}
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            {{ login_form.email(class="form-control", placeholder="Email", required=True) }}
+                        </div>
+                        {% for error in login_form.email.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            {{ login_form.password(class="form-control", placeholder="Password", required=True) }}
+                        </div>
+                        {% for error in login_form.password.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+
+                        <button type="submit" class="btn">Login</button>
+                    </form>
+                    <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+                </div>
+            </div>
+
+            <!-- Back Side (Register Form) -->
+            <div class="back">
+                <div class="content">
+                    <h2>Register</h2>
+                    <!-- Flash messages -->
+                    {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="{{ url_for('register') }}">
+                        {{ register_form.hidden_tag() }}
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            {{ register_form.username(class="form-control", placeholder="Username", required=True) }}
+                        </div>
+                        {% for error in register_form.username.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            {{ register_form.email(class="form-control", placeholder="Email", required=True) }}
+                        </div>
+                        {% for error in register_form.email.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            {{ register_form.password(class="form-control", placeholder="Password", required=True) }}
+                        </div>
+                        {% for error in register_form.password.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            {{ register_form.confirm_password(class="form-control", placeholder="Confirm Password",
+                            required=True) }}
+                        </div>
+                        {% for error in register_form.confirm_password.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+
+                        <button type="submit" class="btn">Register</button>
+                    </form>
+                    <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const card = document.getElementById('card');
+        document.getElementById('show-register').addEventListener('click', () => {
+            card.classList.add('flipped');
+        });
+        document.getElementById('show-login').addEventListener('click', () => {
+            card.classList.remove('flipped');
+        });
+    </script>
+</body>
+</html>
