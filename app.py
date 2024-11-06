@@ -14,16 +14,18 @@ import bleach
 from werkzeug.utils import secure_filename
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import logging
+from logging.handlers import RotatingFileHandler
 
 
 # Load environment variables
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Flask app configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:Mokshagna%40123@localhost/data1'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'your_secret_key')
 
@@ -108,6 +110,8 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+from datetime import datetime
+
 @app.route('/login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
 def login():
@@ -117,11 +121,15 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = Login.query.filter_by(email=form.email.data).first()
-        
+        ip_address = request.remote_addr  # Capture the client's IP address
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Capture the current timestamp
+
         if user is None:
+            app.logger.warning(f"Failed login attempt for non-existent email: {form.email.data} from IP: {ip_address} at {timestamp}")
             flash("Email doesn't exist, please register", 'warning')
         elif user and check_password_hash(user.password_hash, form.password.data):
-            login_user(user, remember=form.remember.data, duration=timedelta(hours=1))  # Secure session duration
+            login_user(user, remember=form.remember.data, duration=timedelta(hours=1))
+            app.logger.info(f"User {user.email} logged in successfully from IP: {ip_address} at {timestamp}")
             flash('Login successful!', 'success')
 
             # Store user information in the session (handled server-side via SQL)
@@ -134,9 +142,11 @@ def login():
             else:
                 return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
+            app.logger.warning(f"Failed login attempt for user: {form.email.data} from IP: {ip_address} at {timestamp}")
             flash('Login failed. Check your email and/or password', 'danger')
 
     return render_template('login.html', form=form)
+
 
 # Route for contact form
 @app.route('/contact', methods=['GET', 'POST'])
@@ -302,6 +312,32 @@ def profile():
 def refresh_user():
     if current_user.is_authenticated:
         db.session.refresh(current_user)
+
+# Configure logging
+if not app.debug:  # Only log in production mode
+    # Create a file handler object that will write logs to a file
+    file_handler = RotatingFileHandler('flaskapp.log', maxBytes=10240, backupCount=10)
+    
+    # Define the format of the logs
+    formatter = logging.Formatter(
+        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    )
+    file_handler.setFormatter(formatter)
+
+    # Set the logging level (you can change it to logging.WARNING, logging.ERROR as needed)
+    file_handler.setLevel(logging.INFO)
+    
+    # Add the handler to the Flask app logger
+    app.logger.addHandler(file_handler)
+
+    # Log the startup message
+    app.logger.info("Flask Art Management Application startup")
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    app.logger.error(f"An error occurred: {e}")
+    return "An internal error occurred", 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

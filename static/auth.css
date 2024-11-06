@@ -1,0 +1,136 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #f7f7f7;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    perspective: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    width: 400px;
+    height: auto;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s ease-in-out;
+}
+
+.card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card .front,
+.card .back {
+    width: 100%;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.card .back {
+    transform: rotateY(180deg);
+}
+
+.content {
+    background: #fff;
+    padding: 2rem;
+    box-sizing: border-box;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.input-group i {
+    padding: 10px;
+    background: #f0f0f0;
+    color: #333;
+    min-width: 40px;
+    text-align: center;
+    border-radius: 4px 0 0 4px;
+}
+
+.input-group .form-control {
+    width: 100%;
+    padding: 10px;
+    outline: none;
+    border: none;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+}
+
+.input-group .form-control:focus {
+    border-color: #007bff;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+p {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+p a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+.alert {
+    padding: 10px;
+    background-color: #f8d7da;
+    color: #721c24;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.error {
+    color: #e74c3c;
+    font-size: 0.9rem;
+}
+
+@media screen and (max-width: 480px) {
+    .card {
+        width: 90%;
+    }
+}
