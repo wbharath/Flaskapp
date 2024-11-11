@@ -114,6 +114,7 @@ class ManageArtForm(FlaskForm):
     relevant_contact_info = StringField('Relevant Contact Info', validators=[Optional()])
     provenance = StringField('Provenance', validators=[Optional()])
     
+    #File header signature 
     picture = FileField('Art Image', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     
     submit = SubmitField('Submit')
