@@ -1,165 +1,236 @@
-{% extends "base.html" %} {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='/art.css') }}" />
-<link
-  href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
-  rel="stylesheet"
-/>
-{% endblock %} {% block content %}
-<!-- Description Section for Webmaster -->
-<div class="container mt-4 description-section">
-  <h2>Welcome Webmaster</h2>
-  <p>
-    Here you can add and manage artists, pictures, and their values. To submit
-    the artwork, make sure to fill out all the required details below.
-  </p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
 
-<!-- Form Section (appears below slideshow) -->
-<div class="container mt-4 form-container manage-art-form">
-  <div class="d-flex justify-content-between align-items-center">
-    <h3>Manage Art</h3>
-    <img
-      src="{{ url_for('static', filename='images/logo-blue.png') }}"
-      alt="NSCC Logo"
-      class="nscc-logo"
-    />
-  </div>
-  <form
-    id="manage-art-form"
-    method="POST"
-    action="{{ url_for('manage_art') }}"
-    enctype="multipart/form-data"
-  >
-    {{ form.hidden_tag() }}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NSCC Foundation</title>
+  <!-- Bootstrap 4 CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="static/art.css" />
+</head>
 
-    <!-- Art Title -->
-    <div class="form-group">
-      {{ form.title.label(class="form-label") }} {{
-      form.title(class="form-control") }}
-    </div>
-
-    <!-- Artist Information -->
-    <div class="form-group">
-      {{ form.artist_name.label(class="form-label") }} {{
-      form.artist_name(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.artist_birth.label(class="form-label") }} {{
-      form.artist_birth(class="form-control", type="date", id="artist_birth") }}
-    </div>
-    <div class="form-group">
-      {{ form.is_deceased.label(class="form-label") }} {{
-      form.is_deceased(id="is_deceased") }}
-    </div>
-    <div class="form-group" id="death-date-group" style="display: none">
-      {{ form.artist_death.label(class="form-label") }} {{
-      form.artist_death(class="form-control", type="date", id="artist_death") }}
-      <small class="text-danger" id="dob-dod-error" style="display: none">
-        Date of birth cannot be greater than date of death.
-      </small>
-    </div>
-    <div class="form-group">
-      {{ form.email.label(class="form-label") }} {{
-      form.email(class="form-control") }} {% for error in form.email.errors %}
-      <span class="text-danger">{{ error }}</span>
-      {% endfor %}
-    </div>
-    <div class="form-group">
-      {{ form.phone.label(class="form-label") }} {{
-      form.phone(class="form-control") }} {% for error in form.phone.errors %}
-      <span class="text-danger">{{ error }}</span>
-      {% endfor %}
-    </div>
-
-    <!-- Value Information -->
-    <div class="form-group">
-      {{ form.nscc_location.label(class="form-label") }} {{
-      form.nscc_location(class="form-control") }} {% for error in
-      form.nscc_location.errors %}
-      <span class="text-danger">{{ error }}</span>
-      {% endfor %}
-    </div>
-    <div class="form-group">
-      {{ form.initial_appraisal.label(class="form-label") }} {{
-      form.initial_appraisal(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.new_appraisal.label(class="form-label") }} {{
-      form.new_appraisal(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.purchase_price.label(class="form-label") }} {{
-      form.purchase_price(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.relevant_contact_info.label(class="form-label") }} {{
-      form.relevant_contact_info(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.provenance.label(class="form-label") }} {{
-      form.provenance(class="form-control") }}
-    </div>
-
-    <!-- Upload Picture -->
-    <div class="form-group">
-      {{ form.picture.label(class="form-label") }} {{
-      form.picture(class="form-control-file") }}
-    </div>
-
-    <button type="submit" class="btn btn-primary">
-      {{ form.submit.label }}
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="NSCC Foundation Logo"
+        style="height: 40px; width: auto; margin-right: 10px; color: white;" />
+      NSCC ART Foundation
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
-  </form>
-</div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left-aligned links -->
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+        {% if current_user.is_authenticated and current_user.role == 'Webmaster' %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_art') }}">Manage Art</a></li>
+        {% endif %}
+      </ul>
 
-{% block extra_js %}
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const deceasedCheckbox = document.getElementById("is_deceased");
-    const deathDateGroup = document.getElementById("death-date-group");
-    const birthDateInput = document.getElementById("artist_birth");
-    const deathDateInput = document.getElementById("artist_death");
-    const dobDodError = document.getElementById("dob-dod-error");
-    const form = document.getElementById("manage-art-form");
+      <!-- Right-aligned username with dropdown on click -->
+      <ul class="navbar-nav ml-auto">
+        {% if current_user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            {{ current_user.username }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+            <a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a>
+            <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
+          </div>
+        </li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
 
-    // Show/Hide death date based on deceased checkbox
-    deceasedCheckbox.addEventListener("change", function () {
-      if (this.checked) {
-        deathDateGroup.style.display = "block"; // Show death date if deceased is checked
-      } else {
-        deathDateGroup.style.display = "none"; // Hide death date if deceased is unchecked
-        dobDodError.style.display = "none"; // Hide the error message when hiding the death date field
+  <!-- Slideshow Section -->
+  <div class="slideshow-container mt-4">
+    <div class="slideshow">
+      <img src="{{ url_for('static', filename='images/a.jpg') }}" class="slides" style="display: block" />
+      <img src="{{ url_for('static', filename='images/b.jpg') }}" class="slides" />
+      <img src="{{ url_for('static', filename='images/c.jpg') }}" class="slides" />
+    </div>
+  </div>
+
+  <div class="container mt-4">
+    <h2>Welcome to NSCC ART Foundation</h2>
+    <p>This is some sample content below the slideshow.</p>
+  </div>
+
+  <!-- Form Section (Manage Art) -->
+  <div class="container mt-4 form-container manage-art-form">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3>Manage Art</h3>
+      <img src="{{ url_for('static', filename='images/logo-blue.png') }}" alt="NSCC Logo" class="nscc-logo" />
+    </div>
+    <form id="manage-art-form" method="POST" action="{{ url_for('manage_art') }}" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+
+      <!-- Art Title -->
+      <div class="form-group">
+        {{ form.title.label(class="form-label") }} {{ form.title(class="form-control") }}
+      </div>
+
+      <!-- Artist Information -->
+      <div class="form-group">
+        {{ form.artist_name.label(class="form-label") }} {{ form.artist_name(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.artist_birth.label(class="form-label") }} {{ form.artist_birth(class="form-control", type="date",
+        id="artist_birth") }}
+      </div>
+      <div class="form-group">
+        {{ form.is_deceased.label(class="form-label") }} {{ form.is_deceased(id="is_deceased") }}
+      </div>
+      <div class="form-group" id="death-date-group" style="display: none">
+        {{ form.artist_death.label(class="form-label") }} {{ form.artist_death(class="form-control", type="date",
+        id="artist_death") }}
+        <small class="text-danger" id="dob-dod-error" style="display: none">
+          Date of birth cannot be greater than date of death.
+        </small>
+      </div>
+      <div class="form-group">
+        {{ form.email.label(class="form-label") }} {{ form.email(class="form-control") }}
+        {% for error in form.email.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.phone.label(class="form-label") }} {{ form.phone(class="form-control") }}
+        {% for error in form.phone.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+
+      <!-- Value Information -->
+      <div class="form-group">
+        {{ form.nscc_location.label(class="form-label") }} {{ form.nscc_location(class="form-control") }}
+        {% for error in form.nscc_location.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.initial_appraisal.label(class="form-label") }} {{ form.initial_appraisal(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.new_appraisal.label(class="form-label") }} {{ form.new_appraisal(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.purchase_price.label(class="form-label") }} {{ form.purchase_price(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.relevant_contact_info.label(class="form-label") }} {{ form.relevant_contact_info(class="form-control")
+        }}
+      </div>
+      <div class="form-group">
+        {{ form.provenance.label(class="form-label") }} {{ form.provenance(class="form-control") }}
+      </div>
+
+      <!-- Upload Picture -->
+      <div class="form-group">
+        {{ form.picture.label(class="form-label") }} {{ form.picture(class="form-control-file") }}
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        {{ form.submit.label }}
+      </button>
+    </form>
+  </div>
+
+  <!-- JavaScript Libraries -->
+  <!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap 4 compatible) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Slideshow JavaScript -->
+  <script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+      let slides = document.getElementsByClassName("slides");
+
+      // Hide all slides initially
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
       }
-    });
 
-    // Validate birth date is not greater than death date
-    deathDateInput.addEventListener("input", function () {
-      validateDate();
-    });
+      // Increment slide index
+      slideIndex++;
 
-    form.addEventListener("submit", function (event) {
-      if (!validateDate()) {
-        event.preventDefault(); // Stop form submission if validation fails
+      // If we go past the last slide, reset to the first slide
+      if (slideIndex > slides.length) {
+        slideIndex = 1;
       }
-    });
 
-    function validateDate() {
-      const birthDate = new Date(birthDateInput.value);
-      const deathDate = new Date(deathDateInput.value);
+      // Display the current slide
+      slides[slideIndex - 1].style.display = "block";
 
-      // Only check if the death date is entered and deceased checkbox is checked
-      if (deceasedCheckbox.checked && deathDateInput.value) {
-        if (birthDate > deathDate) {
-          dobDodError.style.display = "block"; // Show error message
-          return false;
-        } else {
-          dobDodError.style.display = "none"; // Hide error message
-        }
-      } else {
-        dobDodError.style.display = "none"; // Hide error message if not applicable
-      }
-      return true;
+      // Set up the next transition
+      setTimeout(showSlides, 3000); // Change image every 3 seconds
     }
-  });
-</script>
-{% endblock %} {% endblock %}
+  </script>
+
+  <!-- Form JavaScript -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const deceasedCheckbox = document.getElementById("is_deceased");
+      const deathDateGroup = document.getElementById("death-date-group");
+      const birthDateInput = document.getElementById("artist_birth");
+      const deathDateInput = document.getElementById("artist_death");
+      const dobDodError = document.getElementById("dob-dod-error");
+      const form = document.getElementById("manage-art-form");
+
+      // Show/Hide death date based on deceased checkbox
+      deceasedCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+          deathDateGroup.style.display = "block"; // Show death date if deceased is checked
+        } else {
+          deathDateGroup.style.display = "none"; // Hide death date if deceased is unchecked
+          dobDodError.style.display = "none"; // Hide the error message when hiding the death date field
+        }
+      });
+
+      // Validate birth date is not greater than death date
+      deathDateInput.addEventListener("input", function () {
+        validateDate();
+      });
+
+      form.addEventListener("submit", function (event) {
+        if (!validateDate()) {
+          event.preventDefault(); // Stop form submission if validation fails
+        }
+      });
+
+      function validateDate() {
+        const birthDate = new Date(birthDateInput.value);
+        const deathDate = new Date(deathDateInput.value);
+
+        // Only check if the death date is entered and deceased checkbox is checked
+        if (deceasedCheckbox.checked && deathDateInput.value) {
+          if (birthDate > deathDate) {
+            dobDodError.style.display = "block"; // Show error message
+            return false;
+          } else {
+            dobDodError.style.display = "none"; // Hide error message
+          }
+        } else {
+          dobDodError.style.display = "none"; // Hide error message if not applicable
+        }
+        return true;
+      }
+    });
+  </script>
+</body>
+
+</html>

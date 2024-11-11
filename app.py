@@ -16,7 +16,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import logging
 from logging.handlers import RotatingFileHandler
-
+from werkzeug.exceptions import HTTPException  # Import HTTPException for error handling
 
 # Load environment variables
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
@@ -30,14 +30,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'your_secret_key')
 
 # Session management configurations for server-side session security
-app.config['SESSION_TYPE'] = 'sqlalchemy'  # Use server-side session management
+app.config['SESSION_TYPE'] = 'sqlalchemy'
 app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # Sessions expire after 30 minutes of inactivity
-app.config['SESSION_USE_SIGNER'] = True  # Sign the session cookie for extra security
-app.config['SESSION_SQLALCHEMY'] = db  # Link SQLAlchemy session to our database
-app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript from accessing the session cookie
-app.config['SESSION_COOKIE_SECURE'] = False  # Set to True when running over HTTPS
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Prevent CSRF attacks by limiting cross-site requests
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_SQLALCHEMY'] = db
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Initialize database and migration
 db.init_app(app)
@@ -64,29 +64,28 @@ mail = Mail(app)
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth'  # Set to 'auth' for combined login/register route
 
 # Set up Flask-Limiter for rate limiting
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["200 per day", "50 per hour"]  # Global rate limits (can be adjusted)
+    default_limits=["200 per day", "50 per hour"]
 )
 
 # Import database models after initializing db
 with app.app_context():
-    from models import Login, Artist, Picture, Value  # Ensure models are imported after db is initialized
+    from models import Login, Artist, Picture, Value
 
 # User loader callback for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
-    user = Login.query.get(int(user_id))
-    return user
+    return Login.query.get(int(user_id))
 
-# Route to redirect to registration
+# Route to redirect to auth page
 @app.route('/')
 def home_redirect():
-    return redirect(url_for('register'))
+    return redirect(url_for('auth'))
 
 # Route to display homepage with artwork data
 @app.route('/home')
@@ -95,58 +94,57 @@ def index():
     pictures = Picture.query.join(Artist).join(Value).all()
     return render_template('index.html', pictures=pictures)
 
-# Route for user registration
-@app.route('/register', methods=['GET', 'POST'])
+# Combined Login and Registration Route
+@app.route('/auth', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data)
-        # Set the role to 'Webmaster' for testing purposes
-        user = Login(username=form.username.data, email=form.email.data, password_hash=hashed_password, role='Webmaster')
-        db.session.add(user)
-        db.session.commit()
-        flash('Your account has been created!', 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+def auth():
+    login_form = LoginForm()
+    register_form = RegistrationForm()
 
-from datetime import datetime
-
-@app.route('/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = Login.query.filter_by(email=form.email.data).first()
-        ip_address = request.remote_addr  # Capture the client's IP address
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Capture the current timestamp
-
-        if user is None:
-            app.logger.warning(f"Failed login attempt for non-existent email: {form.email.data} from IP: {ip_address} at {timestamp}")
-            flash("Email doesn't exist, please register", 'warning')
-        elif user and check_password_hash(user.password_hash, form.password.data):
-            login_user(user, remember=form.remember.data, duration=timedelta(hours=1))
-            app.logger.info(f"User {user.email} logged in successfully from IP: {ip_address} at {timestamp}")
-            flash('Login successful!', 'success')
-
-            # Store user information in the session (handled server-side via SQL)
-            session['user_id'] = user.id
-            session['username'] = user.username
-
-            next_page = request.args.get('next')
-            if user.role.strip().lower() == 'webmaster':
-                return redirect(next_page) if next_page else redirect(url_for('manage_art'))
+    if request.method == 'POST':
+        # Handle Registration Form Submission
+        if 'register' in request.form and register_form.validate_on_submit():
+            if register_form.password.data != register_form.confirm_password.data:
+                flash('Passwords do not match. Please try again.', 'danger')
             else:
-                return redirect(next_page) if next_page else redirect(url_for('index'))
-        else:
-            app.logger.warning(f"Failed login attempt for user: {form.email.data} from IP: {ip_address} at {timestamp}")
-            flash('Login failed. Check your email and/or password', 'danger')
+                hashed_password = generate_password_hash(register_form.password.data)
+                user = Login(
+                    username=register_form.username.data,
+                    email=register_form.email.data,
+                    password_hash=hashed_password,
+                    role='User'  # Set role appropriately
+                )
+                db.session.add(user)
+                db.session.commit()
+                flash('Your account has been created!', 'success')
+                return redirect(url_for('auth'))  # Redirect to auth page to show login form
 
-    return render_template('login.html', form=form)
+        # Handle Login Form Submission
+        elif 'login' in request.form and login_form.validate_on_submit():
+            user = Login.query.filter_by(email=login_form.email.data).first()
+            ip_address = request.remote_addr
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+            if user is None:
+                app.logger.warning(f"Failed login attempt for non-existent email: {login_form.email.data} from IP: {ip_address} at {timestamp}")
+                flash("Email doesn't exist, please register", 'warning')
+            elif user and check_password_hash(user.password_hash, login_form.password.data):
+                login_user(user, remember=login_form.remember.data, duration=timedelta(hours=1))
+                app.logger.info(f"User {user.email} logged in successfully from IP: {ip_address} at {timestamp}")
+                flash('Login successful!', 'success')
+                session['user_id'] = user.id
+                session['username'] = user.username
+
+                next_page = request.args.get('next')
+                if user.role.strip().lower() == 'webmaster':
+                    return redirect(next_page) if next_page else redirect(url_for('manage_art'))
+                else:
+                    return redirect(next_page) if next_page else redirect(url_for('index'))
+            else:
+                app.logger.warning(f"Failed login attempt for user: {login_form.email.data} from IP: {ip_address} at {timestamp}")
+                flash('Login failed. Check your email and/or password', 'danger')
+
+    return render_template('auth.html', login_form=login_form, register_form=register_form)
 
 # Route for contact form
 @app.route('/contact', methods=['GET', 'POST'])
@@ -173,7 +171,7 @@ def contact():
             flash('Message sent successfully!', 'success')
             return redirect(url_for('index'))
         except Exception as e:
-            print(f'Error sending email: {e}')
+            app.logger.error(f'Error sending email: {e}')
             flash('An error occurred while sending your message. Please try again.', 'danger')
             return redirect(url_for('contact'))
     return render_template('contact.html', form=form)
@@ -183,15 +181,13 @@ def contact():
 @login_required
 def logout():
     logout_user()
-    session.clear()  # Clear all session data
+    session.clear()
     flash('You have been logged out.', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('auth'))
 
 @app.errorhandler(429)
 def ratelimit_handler(e):
     return render_template("429.html", message="Too many requests. Please try again later."), 429
-
-
 
 @app.route('/manage_art', methods=['GET', 'POST'])
 @login_required
@@ -205,12 +201,11 @@ def manage_art():
 
     form = ManageArtForm()
 
-    # Check if the form is submitted and valid
     if form.validate_on_submit():
-        # Sanitize artist fields (excluding date fields)
+        # Sanitize artist fields
         artist_name = bleach.clean(form.artist_name.data, tags=[], strip=True)
-        artist_birth = form.artist_birth.data  # Do not sanitize date fields
-        artist_death = form.artist_death.data if form.is_deceased.data else None  # Do not sanitize date fields
+        artist_birth = form.artist_birth.data
+        artist_death = form.artist_death.data if form.is_deceased.data else None
         email = bleach.clean(form.email.data, tags=[], strip=True)
         phone = bleach.clean(form.phone.data, tags=[], strip=True)
 
@@ -224,11 +219,11 @@ def manage_art():
         db.session.add(artist)
         db.session.commit()
 
-        # Do not sanitize decimal fields, just store them directly
+        # Sanitize value fields
         nscc_location = bleach.clean(form.nscc_location.data, tags=[], strip=True)
-        initial_appraisal = form.initial_appraisal.data  # Do not sanitize decimal fields
-        new_appraisal = form.new_appraisal.data  # Do not sanitize decimal fields
-        purchase_price = form.purchase_price.data  # Do not sanitize decimal fields
+        initial_appraisal = form.initial_appraisal.data
+        new_appraisal = form.new_appraisal.data
+        purchase_price = form.purchase_price.data
         relevant_contact_info = bleach.clean(form.relevant_contact_info.data, tags=[], strip=True)
         provenance = bleach.clean(form.provenance.data, tags=[], strip=True)
 
@@ -243,13 +238,12 @@ def manage_art():
         db.session.add(value)
         db.session.commit()
 
-        # Handle picture upload and picture data
+        # Handle picture upload
         if form.picture.data:
             filename = secure_filename(form.picture.data.filename)
             picture_path = os.path.join('static/images', filename)
             form.picture.data.save(picture_path)
 
-            # Sanitize picture title
             title = bleach.clean(form.title.data, tags=[], strip=True)
 
             picture = Picture(
@@ -267,10 +261,8 @@ def manage_art():
             flash('Please upload an image.', 'danger')
 
         return redirect(url_for('manage_art'))
-
     else:
-        # If form validation fails, print the errors and show a flash message
-        print(form.errors)  # Log form errors to console for debugging
+        print(form.errors)
         flash('There was an error in the form. Please check the fields below.', 'danger')
 
     return render_template('art.html', form=form)
@@ -293,20 +285,13 @@ def profile():
                 if form.password.data:
                     current_user.password_hash = generate_password_hash(form.password.data)
                 db.session.commit()
-
-                # Set up the toast message
-                toast_title = "Success"
-                toast_message = "Your profile has been updated successfully!"
+                flash("Your profile has been updated successfully!", "success")
             else:
-                toast_title = "Error"
-                toast_message = "Current password is incorrect."
+                flash("Current password is incorrect.", "danger")
         else:
-            toast_title = "Warning"
-            toast_message = "Please enter your current password to update your profile."
+            flash("Please enter your current password to update your profile.", "warning")
 
-        return render_template('profile.html', form=form, toast_title=toast_title, toast_message=toast_message)
-
-    return render_template('profile.html', form=form, toast_title="", toast_message="")
+    return render_template('profile.html', form=form)
 
 @app.before_request
 def refresh_user():
@@ -315,29 +300,19 @@ def refresh_user():
 
 # Configure logging
 if not app.debug:  # Only log in production mode
-    # Create a file handler object that will write logs to a file
-    file_handler = RotatingFileHandler('flaskapp.log', maxBytes=10240, backupCount=10)
-    
-    # Define the format of the logs
-    formatter = logging.Formatter(
-        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
-    )
+    file_handler = RotatingFileHandler('flaskapp.log', maxBytes=10240, backupCount=10, delay=True)
+    formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
     file_handler.setFormatter(formatter)
-
-    # Set the logging level (you can change it to logging.WARNING, logging.ERROR as needed)
     file_handler.setLevel(logging.INFO)
-    
-    # Add the handler to the Flask app logger
     app.logger.addHandler(file_handler)
-
-    # Log the startup message
     app.logger.info("Flask Art Management Application startup")
 
 @app.errorhandler(Exception)
 def handle_exception(e):
+    if isinstance(e, HTTPException):
+        return e
     app.logger.error(f"An error occurred: {e}")
     return "An internal error occurred", 500
-
 
 if __name__ == '__main__':
     app.run(debug=True)
