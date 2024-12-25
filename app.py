@@ -17,6 +17,9 @@ from flask_limiter.util import get_remote_address
 import logging
 from logging.handlers import RotatingFileHandler
 from werkzeug.exceptions import HTTPException  # Import HTTPException for error handling
+from markupsafe import Markup
+import re
+from sqlalchemy import or_
 
 # Load environment variables
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
@@ -87,12 +90,7 @@ def load_user(user_id):
 def home_redirect():
     return redirect(url_for('auth'))
 
-# Route to display homepage with artwork data
-@app.route('/home')
-@login_required
-def index():
-    pictures = Picture.query.join(Artist).join(Value).all()
-    return render_template('index.html', pictures=pictures)
+
 
 # Combined Login and Registration Route
 @app.route('/auth', methods=['GET', 'POST'])
@@ -313,6 +311,61 @@ def handle_exception(e):
         return e
     app.logger.error(f"An error occurred: {e}")
     return "An internal error occurred", 500
+
+# Route to display homepage with artwork data and handle search queries
+@app.route('/home', methods=['GET'])
+@login_required
+def index():
+    search_query = request.args.get('search', '').strip()
+    filter_artist = request.args.get('filter_artist')
+    filter_title = request.args.get('filter_title')
+
+    filters = []
+    if filter_artist:
+        filters.append('artist')
+    if filter_title:
+        filters.append('title')
+
+    query_filters = []
+
+    if search_query:
+        if filter_artist and filter_title:
+            query_filters.append(
+                or_(
+                    Picture.title.ilike(f'%{search_query}%'),
+                    Artist.artist_name.ilike(f'%{search_query}%')
+                )
+            )
+        elif filter_artist:
+            query_filters.append(Artist.artist_name.ilike(f'%{search_query}%'))
+        elif filter_title:
+            query_filters.append(Picture.title.ilike(f'%{search_query}%'))
+        else:
+            query_filters.append(
+                or_(
+                    Picture.title.ilike(f'%{search_query}%'),
+                    Artist.artist_name.ilike(f'%{search_query}%'),
+                    Value.nscc_location.ilike(f'%{search_query}%'),
+                    Value.provenance.ilike(f'%{search_query}%')
+                )
+            )
+
+    if query_filters:
+        pictures = Picture.query.join(Artist).join(Value).filter(*query_filters).all()
+    else:
+        pictures = Picture.query.join(Artist).join(Value).all()
+
+    return render_template('index.html', pictures=pictures, search_query=search_query, filters=filters)
+
+@app.template_filter('highlight')
+def highlight(text, search):
+    if not search:
+        return text
+    # Escape special characters in the search query
+    escaped_search = re.escape(search)
+    pattern = re.compile(escaped_search, re.IGNORECASE)
+    highlighted = pattern.sub(lambda match: Markup(f"<mark>{match.group(0)}</mark>"), text)
+    return highlighted
 
 if __name__ == '__main__':
     app.run(debug=True)
