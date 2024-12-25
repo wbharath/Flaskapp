@@ -56,3 +56,11 @@ sqlalchemy.exc.PendingRollbackError: This Session's transaction has been rolled 
 [2024-12-25 16:36:29,627] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 16:36:29
 [2024-12-25 17:17:56,529] WARNING in app: Failed login attempt for user: brad@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:17:56
 [2024-12-25 17:20:17,473] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:20:17
+[2024-12-25 17:42:24,839] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:42:24
+[2024-12-25 17:46:51,903] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:46:51
+[2024-12-25 17:46:58,231] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:46:58
+[2024-12-25 17:47:03,709] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:47:03
+[2024-12-25 17:47:55,601] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:47:55
+[2024-12-25 17:50:55,787] WARNING in app: Failed login attempt for user: bradwajj@gmail.com from IP: 127.0.0.1 at 2024-12-25 17:50:55
+[2024-12-25 18:30:04,496] ERROR in app: An error occurred: base.html
+[2024-12-25 18:30:55,776] ERROR in app: An error occurred: base.html

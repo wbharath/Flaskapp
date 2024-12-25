@@ -127,7 +127,7 @@ body {
   border-radius: 10px;
   margin-top: 20px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Georgia", serif;
+  font-family: 'Georgia', serif;
 }
 
 .manage-art-form h3 {
@@ -145,7 +145,7 @@ body {
 .manage-art-form .form-control {
   border: 1px solid #d4b483;
   background-color: #fff5e1;
-  padding: 12px;
+  padding: 8px;
   border-radius: 5px;
   margin-bottom: 15px;
 }

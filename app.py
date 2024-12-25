@@ -192,7 +192,7 @@ def ratelimit_handler(e):
 def manage_art():
     print(f"Current user ID: {current_user.id}")
     print(f"Current user role: {current_user.role}")
-    
+
     if current_user.role.strip().lower() != 'webmaster':
         flash('You do not have permission to access this page.', 'danger')
         return redirect(url_for('index'))
@@ -200,70 +200,76 @@ def manage_art():
     form = ManageArtForm()
 
     if form.validate_on_submit():
-        # Sanitize artist fields
-        artist_name = bleach.clean(form.artist_name.data, tags=[], strip=True)
-        artist_birth = form.artist_birth.data
-        artist_death = form.artist_death.data if form.is_deceased.data else None
-        email = bleach.clean(form.email.data, tags=[], strip=True)
-        phone = bleach.clean(form.phone.data, tags=[], strip=True)
+        try:
+            # Sanitize and process artist fields
+            artist_name = bleach.clean(form.artist_name.data, tags=[], strip=True)
+            artist_birth = form.artist_birth.data
+            artist_death = form.artist_death.data if form.is_deceased.data else None
+            email = bleach.clean(form.email.data, tags=[], strip=True)
+            phone = bleach.clean(form.phone.data, tags=[], strip=True)
 
-        artist = Artist(
-            artist_name=artist_name,
-            artist_birth=artist_birth,
-            artist_death=artist_death,
-            email=email,
-            phone=phone
-        )
-        db.session.add(artist)
-        db.session.commit()
-
-        # Sanitize value fields
-        nscc_location = bleach.clean(form.nscc_location.data, tags=[], strip=True)
-        initial_appraisal = form.initial_appraisal.data
-        new_appraisal = form.new_appraisal.data
-        purchase_price = form.purchase_price.data
-        relevant_contact_info = bleach.clean(form.relevant_contact_info.data, tags=[], strip=True)
-        provenance = bleach.clean(form.provenance.data, tags=[], strip=True)
-
-        value = Value(
-            nscc_location=nscc_location,
-            initial_appraisal=initial_appraisal,
-            new_appraisal=new_appraisal,
-            purchase_price=purchase_price,
-            relevant_contact_info=relevant_contact_info,
-            provenance=provenance
-        )
-        db.session.add(value)
-        db.session.commit()
-
-        # Handle picture upload
-        if form.picture.data:
-            filename = secure_filename(form.picture.data.filename)
-            picture_path = os.path.join('static/images', filename)
-            form.picture.data.save(picture_path)
-
-            title = bleach.clean(form.title.data, tags=[], strip=True)
-
-            picture = Picture(
-                title=title,
-                artist_id=artist.id,
-                value_id=value.id,
-                created_at=datetime.utcnow(),
-                image_path=f'images/{filename}'
+            artist = Artist(
+                artist_name=artist_name,
+                artist_birth=artist_birth,
+                artist_death=artist_death,
+                email=email,
+                phone=phone
             )
-            db.session.add(picture)
+            db.session.add(artist)
             db.session.commit()
 
-            flash('Art has been successfully uploaded!', 'success')
-        else:
-            flash('Please upload an image.', 'danger')
+            # Sanitize and process value fields
+            nscc_location = bleach.clean(form.nscc_location.data, tags=[], strip=True)
+            initial_appraisal = form.initial_appraisal.data
+            new_appraisal = form.new_appraisal.data
+            purchase_price = form.purchase_price.data
+            relevant_contact_info = bleach.clean(form.relevant_contact_info.data, tags=[], strip=True)
+            provenance = bleach.clean(form.provenance.data, tags=[], strip=True)
 
+            value = Value(
+                nscc_location=nscc_location,
+                initial_appraisal=initial_appraisal,
+                new_appraisal=new_appraisal,
+                purchase_price=purchase_price,
+                relevant_contact_info=relevant_contact_info,
+                provenance=provenance
+            )
+            db.session.add(value)
+            db.session.commit()
+
+            # Handle picture upload
+            if form.picture.data:
+                filename = secure_filename(form.picture.data.filename)
+                picture_path = os.path.join('static/images', filename)
+                form.picture.data.save(picture_path)
+
+                title = bleach.clean(form.title.data, tags=[], strip=True)
+
+                picture = Picture(
+                    title=title,
+                    artist_id=artist.id,
+                    value_id=value.id,
+                    created_at=datetime.utcnow(),
+                    image_path=f'images/{filename}'
+                )
+                db.session.add(picture)
+                db.session.commit()
+
+                flash('Art has been successfully uploaded!', 'success')
+            else:
+                flash('Please upload an image.', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash('An unexpected error occurred. Please try again.', 'danger')
+            print(f"Error: {e}")
+        
         return redirect(url_for('manage_art'))
-    else:
-        print(form.errors)
+    elif form.errors:
         flash('There was an error in the form. Please check the fields below.', 'danger')
+        print(form.errors)
 
     return render_template('art.html', form=form)
+
 
 # Route to update user profile
 @app.route('/profile', methods=['GET', 'POST'])

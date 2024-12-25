@@ -63,7 +63,6 @@
 
   <div class="container mt-4">
     <h2>Welcome to NSCC ART Foundation</h2>
-    <p>This is some sample content below the slideshow.</p>
   </div>
 
   <!-- Form Section (Manage Art) -->
@@ -145,6 +144,36 @@
       </button>
     </form>
   </div>
+  
+  <!-- Bootstrap Modal for Flash Message -->
+  <div class="modal fade" id="flashMessageModal" tabindex="-1" role="dialog" aria-labelledby="flashMessageModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="flashMessageModalLabel">Notification</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- JavaScript Libraries -->
   <!-- jQuery, Popper.js, and Bootstrap JS (Bootstrap 4 compatible) -->
@@ -231,6 +260,16 @@
       }
     });
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const flashMessages = document.querySelectorAll(".alert");
+      if (flashMessages.length > 0) {
+        // Show the modal if there are flash messages
+        $("#flashMessageModal").modal("show");
+      }
+    });
+  </script>
+
 </body>
 
 </html>
