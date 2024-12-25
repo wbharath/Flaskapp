@@ -20,7 +20,7 @@
                 <img src="static/images/abc.jpg" alt="">
                 <div class="text">
                     <span class="text-1">Welcome to NSCC Art
-                        Foundation<br>We have art collections from various artists</span>
+                        Foundation<br></span>
                     <span class="text-2">Let's check the Art</span>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 <img class="backImg" src="static/images/abc.jpg" alt="">
                 <div class="text">
                     <span class="text-1">Welcome to NSCC ART
-                        Foundation<br>We have art collections from various artists</span>
+                        Foundation<br></span>
                     <span class="text-2">Let's check the art</span>
                 </div>
             </div>
@@ -38,6 +38,16 @@
                 <!-- Login Form -->
                 <div class="login-form">
                     <div class="title">Login</div>
+                    <!-- Flash Messages for Login -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
                     <form method="POST" action="{{ url_for('auth') }}">
                         {{ login_form.hidden_tag() }}
                         <div class="input-boxes">
@@ -63,6 +73,16 @@
                 <!-- Signup Form -->
                 <div class="signup-form">
                     <div class="title">Signup</div>
+                    <!-- Flash Messages for Signup -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
                     <form method="POST" action="{{ url_for('auth') }}">
                         {{ register_form.hidden_tag() }}
                         <div class="input-boxes">

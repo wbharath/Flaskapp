@@ -72,19 +72,6 @@
     </nav>
   </header>
 
-  <!-- Flash Messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %}
-  <div class="container mt-4">
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %} {% endwith %}
 
   <!-- Slideshow -->
   <div class="slideshow-container">
@@ -189,6 +176,35 @@
     </div>
   </div>
 
+  <!-- Bootstrap Modal for Flash Message -->
+  <div class="modal fade" id="flashMessageModal" tabindex="-1" role="dialog" aria-labelledby="flashMessageModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="flashMessageModalLabel">Notification</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- jQuery, Popper.js, and Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -233,6 +249,15 @@
         // Submit the form to display default results
         searchInput.form.submit();
       });
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const flashMessages = document.querySelectorAll(".alert");
+      if (flashMessages.length > 0) {
+        // Show the modal if there are flash messages
+        $("#flashMessageModal").modal("show");
+      }
     });
   </script>
 
