@@ -64,6 +64,7 @@ app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False') == 'True'
 # Initialize Flask-Mail
 mail = Mail(app)
 
+
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -146,7 +147,6 @@ def auth():
 
 # Route for contact form
 @app.route('/contact', methods=['GET', 'POST'])
-@limiter.limit("3 per minute")
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
@@ -182,6 +182,7 @@ def logout():
     session.clear()
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth'))
+
 
 @app.errorhandler(429)
 def ratelimit_handler(e):

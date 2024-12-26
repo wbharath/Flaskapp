@@ -1,93 +1,120 @@
-/* Styles for contact page popup */
+/* Base styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* Slideshow styles */
-.slideshow-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1; /* Ensures slideshow is in the background */
-}
-
-.slideshow {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.slides {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Popup styles */
+/* Popup Container */
 .popup {
-  display: none; /* Hidden by default */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  z-index: 1000; /* Ensure popup is on top */
-  overflow: auto;
-  display: flex; /* Flexbox to center content */
-  align-items: center; /* Center vertically */
-  justify-content: center; /* Center horizontally */
+  z-index: 1000;
 }
 
+/* Popup Content */
 .popup-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  width: 80%;
-  max-width: 600px;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px 30px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 
+/* Close Button */
 .close-btn {
   position: absolute;
   top: 10px;
-  right: 10px;
-  font-size: 24px;
+  right: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
   cursor: pointer;
 }
 
+.close-btn:hover {
+  color: #ff0000;
+}
+
+/* Headings */
 h2 {
+  margin-bottom: 10px;
+  color: #004477;
+}
+
+p {
   margin-bottom: 20px;
-  font-size: 2rem;
-  color: #343a40;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Form Styles */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
 }
 
 .form-label {
+  display: block;
+  margin-bottom: 5px;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .form-control {
-  margin-bottom: 1rem;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  border: 1px solid #ced4da;
+  font-size: 14px;
 }
 
-.btn-primary {
-  background-color: #007bff;
+.form-control:focus {
+  border-color: #004477;
+  outline: none;
+}
+
+/* Radio Buttons */
+.radio-group {
+  display: flex;
+  gap: 10px;
+}
+
+.form-check-input {
+  margin-right: 5px;
+  transform: scale(1.2);
+}
+
+/* Submit Button */
+.btn {
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #004477;
   border: none;
   border-radius: 4px;
-  padding: 10px 20px;
-  color: #ffffff;
-  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
-  transition: background-color 0.3s;
+.btn:hover {
+  background-color: #003366;
 }
