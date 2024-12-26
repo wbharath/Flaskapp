@@ -20,7 +20,7 @@ from werkzeug.exceptions import HTTPException  # Import HTTPException for error 
 from markupsafe import Markup
 import re
 from sqlalchemy import or_
-
+from PIL import Image
 # Load environment variables
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
@@ -202,7 +202,7 @@ def manage_art():
 
     if form.validate_on_submit():
         try:
-            # Sanitize and process artist fields
+            # Process and sanitize artist fields
             artist_name = bleach.clean(form.artist_name.data, tags=[], strip=True)
             artist_birth = form.artist_birth.data
             artist_death = form.artist_death.data if form.is_deceased.data else None
@@ -219,7 +219,7 @@ def manage_art():
             db.session.add(artist)
             db.session.commit()
 
-            # Sanitize and process value fields
+            # Process and sanitize value fields
             nscc_location = bleach.clean(form.nscc_location.data, tags=[], strip=True)
             initial_appraisal = form.initial_appraisal.data
             new_appraisal = form.new_appraisal.data
@@ -239,10 +239,24 @@ def manage_art():
             db.session.commit()
 
             # Handle picture upload
-            if form.picture.data:
-                filename = secure_filename(form.picture.data.filename)
-                picture_path = os.path.join('static/images', filename)
-                form.picture.data.save(picture_path)
+            file = request.files.get('file')
+            if file and allowed_file(file.filename):
+                if not file_size(file):
+                    flash('File size exceeds 5 MB limit.', 'danger')
+                    return redirect(url_for('manage_art'))
+
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+                # Save and verify the file as an image
+                try:
+                    file.save(file_path)
+                    with Image.open(file_path) as img:
+                        img.verify()  # Ensure it's a valid image
+                except Exception:
+                    os.remove(file_path)
+                    flash('Uploaded file is not a valid image.', 'danger')
+                    return redirect(url_for('manage_art'))
 
                 title = bleach.clean(form.title.data, tags=[], strip=True)
 
@@ -258,12 +272,12 @@ def manage_art():
 
                 flash('Art has been successfully uploaded!', 'success')
             else:
-                flash('Please upload an image.', 'danger')
+                flash('Invalid file type. Only JPG and PNG are allowed.', 'danger')
         except Exception as e:
             db.session.rollback()
             flash('An unexpected error occurred. Please try again.', 'danger')
             print(f"Error: {e}")
-        
+
         return redirect(url_for('manage_art'))
     elif form.errors:
         flash('There was an error in the form. Please check the fields below.', 'danger')
@@ -373,6 +387,25 @@ def highlight(text, search):
     pattern = re.compile(escaped_search, re.IGNORECASE)
     highlighted = pattern.sub(lambda match: Markup(f"<mark>{match.group(0)}</mark>"), text)
     return highlighted
+
+# Configuration for upload folder and allowed extensions
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Check if file type is allowed
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Validate file size
+def file_size(file):
+    file.seek(0, os.SEEK_END)
+    size = file.tell()
+    file.seek(0)  # Reset file pointer
+    return size <= MAX_FILE_SIZE
+
 
 if __name__ == '__main__':
     app.run(debug=True)

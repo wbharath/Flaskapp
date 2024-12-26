@@ -135,9 +135,20 @@
       </div>
 
       <!-- Upload Picture -->
+      <!-- Upload Picture -->
       <div class="form-group">
-        {{ form.picture.label(class="form-label") }} {{ form.picture(class="form-control-file") }}
+        {{ form.picture.label(class="form-label") }}
+        <input
+          type="file"
+          id="fileInput"
+          name="file"
+          class="form-control-file"
+          accept="image/jpeg, image/png"
+          required
+        />
+        <p id="fileError" class="text-danger" style="display: none;">Invalid file. Please upload a valid image.</p>
       </div>
+
 
       <button type="submit" class="btn btn-primary">
         {{ form.submit.label }}
@@ -269,6 +280,42 @@
       }
     });
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const fileInput = document.getElementById("fileInput");
+      const fileError = document.getElementById("fileError");
+
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        fileError.style.display = "none";
+
+        // Validate file size (e.g., 5 MB limit)
+        if (file.size > 5 * 1024 * 1024) {
+          fileError.textContent = "File size must not exceed 5 MB.";
+          fileError.style.display = "block";
+          fileInput.value = ""; // Clear the input
+          return;
+        }
+
+        // Validate file name length and characters
+        if (file.name.length > 100 || !/^[a-zA-Z0-9._-]+$/.test(file.name)) {
+          fileError.textContent = "File name is invalid or too long.";
+          fileError.style.display = "block";
+          fileInput.value = "";
+          return;
+        }
+
+        // Validate MIME type
+        const validTypes = ["image/jpeg", "image/png"];
+        if (!validTypes.includes(file.type)) {
+          fileError.textContent = "Only JPG and PNG files are allowed.";
+          fileError.style.display = "block";
+          fileInput.value = "";
+        }
+      });
+    });
+  </script>
+
 
 </body>
 
