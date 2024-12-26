@@ -1,6 +1,15 @@
-{% extends "base.html" %} {% block title %}Contact Us{% endblock %} {% block
-content %}
 <!-- Contact form popup -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us</title>
+  <link rel="stylesheet" href="static/contact.css">
+</head>
+
+<body>
 <div id="contactFormPopup" class="popup">
   <div class="popup-content">
     <span class="close-btn" onclick="closeContactForm()">&times;</span>
@@ -96,4 +105,5 @@ content %}
     </form>
   </div>
 </div>
-{% endblock %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
