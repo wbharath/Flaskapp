@@ -21,7 +21,7 @@ class RegistrationForm(FlaskForm):
     ])
     password = PasswordField('Password', validators=[
         DataRequired(),
-        Length(min=6)
+        Length(min=6, max=20)
     ])
     confirm_password = PasswordField('Confirm Password', validators=[
         DataRequired(),
@@ -32,7 +32,7 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=20)])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
@@ -127,7 +127,7 @@ class UpdateProfileForm(FlaskForm):
     current_password = PasswordField('Current Password', validators=[DataRequired()])
 
     # Add new password fields for updating the password
-    password = PasswordField('New Password', validators=[DataRequired()])
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=6, max=20)])
     confirm_password = PasswordField(
         'Confirm New Password',
         validators=[DataRequired(), EqualTo('password', message='Passwords must match')]
