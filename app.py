@@ -93,7 +93,6 @@ def home_redirect():
 
 
 
-# Combined Login and Registration Route
 @app.route('/auth', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
 def auth():
@@ -101,35 +100,47 @@ def auth():
     register_form = RegistrationForm()
 
     if request.method == 'POST':
-        # Handle Registration Form Submission
-        if 'register' in request.form and register_form.validate_on_submit():
-            if register_form.password.data != register_form.confirm_password.data:
-                flash('Passwords do not match. Please try again.', 'danger')
-            else:
+
+        # ---- Handle Registration Form Submission ----
+        if 'register' in request.form:
+            # If the form validates, that includes matching passwords via EqualTo('password').
+            if register_form.validate_on_submit():
                 hashed_password = generate_password_hash(register_form.password.data)
                 user = Login(
                     username=register_form.username.data,
                     email=register_form.email.data,
                     password_hash=hashed_password,
-                    role='User'  # Set role appropriately
+                    role='User'
                 )
                 db.session.add(user)
                 db.session.commit()
                 flash('Your account has been created!', 'success')
-                return redirect(url_for('auth'))  # Redirect to auth page to show login form
+                return redirect(url_for('auth'))  # Redirect to show login form
+            else:
+                # WTForms caught some error (passwords mismatch, invalid email, etc.)
+                app.logger.warning("Registration form validation failed.")
+                return render_template('auth.html',
+                                       login_form=login_form,
+                                       register_form=register_form)
 
-        # Handle Login Form Submission
+        # ---- Handle Login Form Submission ----
         elif 'login' in request.form and login_form.validate_on_submit():
             user = Login.query.filter_by(email=login_form.email.data).first()
             ip_address = request.remote_addr
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             if user is None:
-                app.logger.warning(f"Failed login attempt for non-existent email: {login_form.email.data} from IP: {ip_address} at {timestamp}")
+                app.logger.warning(
+                    f"Failed login attempt for non-existent email: {login_form.email.data} "
+                    f"from IP: {ip_address} at {timestamp}"
+                )
                 flash("Email doesn't exist, please register", 'warning')
+
             elif user and check_password_hash(user.password_hash, login_form.password.data):
                 login_user(user, remember=login_form.remember.data, duration=timedelta(hours=1))
-                app.logger.info(f"User {user.email} logged in successfully from IP: {ip_address} at {timestamp}")
+                app.logger.info(
+                    f"User {user.email} logged in successfully from IP: {ip_address} at {timestamp}"
+                )
                 flash('Login successful!', 'success')
                 session['user_id'] = user.id
                 session['username'] = user.username
@@ -140,10 +151,16 @@ def auth():
                 else:
                     return redirect(next_page) if next_page else redirect(url_for('index'))
             else:
-                app.logger.warning(f"Failed login attempt for user: {login_form.email.data} from IP: {ip_address} at {timestamp}")
+                app.logger.warning(
+                    f"Failed login attempt for user: {login_form.email.data} "
+                    f"from IP: {ip_address} at {timestamp}"
+                )
                 flash('Login failed. Check your email and/or password', 'danger')
 
+    # If GET or no matching POST action, just show the auth page
     return render_template('auth.html', login_form=login_form, register_form=register_form)
+
+
 
 # Route for contact form
 @app.route('/contact', methods=['GET', 'POST'])

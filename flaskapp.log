@@ -8,3 +8,16 @@
 [2024-12-26 18:07:43,334] ERROR in app: Error sending email: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d75a77b69052e-46a3eb17a2dsm74243731cf.59 - gsmtp')
 [2024-12-26 18:11:04,655] ERROR in app: Error sending email: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 6a1803df08f44-6dd181c13b6sm73022526d6.96 - gsmtp')
 [2024-12-26 18:17:00,056] ERROR in app: Error sending email: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 6a1803df08f44-6dd181d75c8sm73043286d6.116 - gsmtp')
+[2025-01-14 17:42:34,649] WARNING in app: Failed login attempt for non-existent email: sampit@gmail.com from IP: 127.0.0.1 at 2025-01-14 17:42:34
+[2025-01-14 17:50:25,801] WARNING in app: Failed login attempt for non-existent email: sampit@gmail.com from IP: 127.0.0.1 at 2025-01-14 17:50:25
+[2025-01-14 17:52:17,505] WARNING in app: Failed login attempt for non-existent email: sampit@gmail.com from IP: 127.0.0.1 at 2025-01-14 17:52:17
+[2025-01-14 17:52:43,292] WARNING in app: Failed login attempt for non-existent email: brad12345@gmail.com from IP: 127.0.0.1 at 2025-01-14 17:52:43
+[2025-01-14 18:17:52,367] WARNING in app: Failed login attempt for non-existent email: brasddd@gmail.com from IP: 127.0.0.1 at 2025-01-14 18:17:52
+
+
+[2025-01-14 18:32:22,043] WARNING in app: >>> Password mismatch logic triggered!
+[2025-01-14 18:37:37,391] WARNING in app: Registration form validation failed.
+[2025-01-14 18:38:28,940] WARNING in app: Registration form validation failed.
+[2025-01-14 18:41:10,831] WARNING in app: Registration form validation failed.
+[2025-01-14 18:41:47,870] WARNING in app: Registration form validation failed.
+[2025-01-14 18:42:17,559] WARNING in app: Registration form validation failed.

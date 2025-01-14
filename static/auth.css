@@ -17,6 +17,30 @@ body {
   padding: 30px;
 }
 
+.flash-messages-container {
+  position: fixed; /* or absolute */
+  top: 20px; /* place it near top or wherever you prefer */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999; /* ensure it's above the forms */
+}
+
+.flash-messages {
+  background-color: #f8d7da; /* or your preferred BG color */
+  padding: 10px 20px;
+  border-radius: 5px;
+  /* or any styling you want */
+}
+
+.alert {
+  margin-bottom: 5px;
+}
+
+.error-text {
+  color: red;
+  font-weight: bold;
+}
+
 #particles-js {
   position: fixed;
   width: 100%;

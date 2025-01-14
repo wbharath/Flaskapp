@@ -10,6 +10,19 @@
 </head>
 <body>
 
+    <div class="flash-messages-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+
     <!-- Particles Container -->
     <div id="particles-js"></div>
 
@@ -38,16 +51,6 @@
                 <!-- Login Form -->
                 <div class="login-form">
                     <div class="title">Login</div>
-                    <!-- Flash Messages for Login -->
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    <div class="flash-messages">
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    {% endwith %}
                     <form method="POST" action="{{ url_for('auth') }}">
                         {{ login_form.hidden_tag() }}
                         <div class="input-boxes">
@@ -73,16 +76,6 @@
                 <!-- Signup Form -->
                 <div class="signup-form">
                     <div class="title">Signup</div>
-                    <!-- Flash Messages for Signup -->
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    <div class="flash-messages">
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    {% endwith %}
                     <form method="POST" action="{{ url_for('auth') }}">
                         {{ register_form.hidden_tag() }}
                         <div class="input-boxes">
@@ -101,11 +94,27 @@
                                 {{ register_form.password(class="form-control", placeholder="Enter your password",
                                 required=True) }}
                             </div>
+                            <!-- Display any password field errors -->
+                            {% if register_form.password.errors %}
+                            <div class="error-text">
+                                {% for error in register_form.password.errors %}
+                                {{ error }}<br>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                             <div class="input-box">
                                 <i class="fas fa-lock"></i>
                                 {{ register_form.confirm_password(class="form-control", placeholder="Confirm your
                                 password", required=True) }}
                             </div>
+                            {% if register_form.confirm_password.errors %}
+                            <div class="error-text">
+                                {% for error in register_form.confirm_password.errors %}
+                                {{ error }}<br>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
                             <div class="button input-box">
                                 <input type="submit" name="register" value="Register">
                             </div>
@@ -117,6 +126,11 @@
             </div>
         </div>
     </div>
+    {% if register_form.errors %}
+    <script>
+        document.getElementById("flip").checked = true;
+    </script>
+    {% endif %}
 
     <!-- Particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@1.37.5/tsparticles.min.js"></script>
