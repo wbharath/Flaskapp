@@ -89,6 +89,11 @@
                                 {{ register_form.email(class="form-control", placeholder="Enter your email",
                                 required=True) }}
                             </div>
+                            <div class="error-text">
+                                {% for error in register_form.email.errors %}
+                                {{ error }}<br>
+                              {% endfor %}
+                            </div>
                             <div class="input-box">
                                 <i class="fas fa-lock"></i>
                                 {{ register_form.password(class="form-control", placeholder="Enter your password",
