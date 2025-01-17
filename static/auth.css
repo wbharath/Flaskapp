@@ -18,18 +18,17 @@ body {
 }
 
 .flash-messages-container {
-  position: fixed; /* or absolute */
-  top: 20px; /* place it near top or wherever you prefer */
+  position: fixed; 
+  top: 20px; 
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9999; /* ensure it's above the forms */
+  z-index: 9999; 
 }
 
 .flash-messages {
-  background-color: #f8d7da; /* or your preferred BG color */
+  background-color: #f8d7da; 
   padding: 10px 20px;
   border-radius: 5px;
-  /* or any styling you want */
 }
 
 .alert {
@@ -46,19 +45,16 @@ body {
   width: 100%;
   height: 100%;
   z-index: -2;
-  /* Place particles far behind all other elements */
   top: 0;
   left: 0;
   pointer-events: none;
   background: transparent;
-  /* Ensure it's transparent */
 }
 
 /* Container Styling to Keep Content Above Particles */
 .container {
   position: relative;
   z-index: 2;
-  /* Ensure container stays above the particles */
   max-width: 850px;
   width: 100%;
   background: #fff;
@@ -75,7 +71,6 @@ body {
   height: 100%;
   width: 50%;
   z-index: 2;
-  /* Should be lower than container */
   transition: all 1s ease;
   transform-origin: left;
   transform-style: preserve-3d;
@@ -295,7 +290,7 @@ body {
   }
 }
 input::placeholder {
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide overflowed text */
-  text-overflow: ellipsis; /* Add ellipsis (...) for overflowed text */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }

@@ -8,20 +8,15 @@ body {
 }
 
 /* Header styles */
-/* Header styles */
 header {
   background-color: #004477;
-  /* Light background for the header */
   padding: 0.1rem !important;
-  /* Reduced padding to decrease height */
   position: fixed;
   width: 100%;
   top: 0;
   left: 0;
   z-index: 2;
-  /* Ensure it stays above other elements */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Subtle shadow for depth */
 }
 
 .navbar {
@@ -31,22 +26,18 @@ header {
   width: 100%;
   z-index: 1000;
   background-color: #004477 !important;
-  /* Ensures it's on top */
 }
 
 .navbar-light .navbar-nav .nav-link {
   color: #ffffff !important;
-  /* Set link color */
 }
 
 .navbar-light .navbar-brand {
   color: #ffffff !important;
-  /* Set brand color */
 }
 
 .navbar-light .navbar-toggler-icon {
   background-color: #ffffff !important;
-  /* Set the color of the toggler icon if needed */
 }
 
 /* Slideshow styles */
@@ -55,7 +46,6 @@ header {
   height: 80vh;
   /* Adjust height to 50% of viewport height */
   margin-top: 60px;
-  /* Adjust for fixed header */
   position: relative;
 }
 
@@ -80,7 +70,6 @@ header {
 /* Modal styles */
 .modal-container {
   display: none;
-  /* Hidden by default */
   position: fixed;
   top: 0;
   left: 0;
@@ -116,7 +105,6 @@ header {
   left: 0;
   pointer-events: none;
   background: transparent;
-  /* Ensure it's transparent */
 }
 
 /* General spacing */
@@ -234,7 +222,7 @@ header {
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
   color: #444;
-  width: calc(100% - 3rem); /* Adjusted to leave space for the button */
+  width: calc(100% - 3rem); 
 }
 
 .search-input:focus {

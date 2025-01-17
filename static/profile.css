@@ -8,31 +8,23 @@
   left: 0;
   pointer-events: none;
   background: transparent;
-  /* Ensure it's transparent */
 }
 
 /* Profile Container Styling */
 .profile-container {
   position: fixed;
-  /* Keep container fixed in place */
   top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* Center container in the viewport */
   z-index: 2;
-  /* Ensure container stays above particles */
   max-width: 650px;
-  /* Adjusted to fit well */
   width: 90%;
-  /* Responsive width */
   background: #fff;
   padding: 20px;
   /* Adjusted padding for compactness */
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
-  /* Ensure container doesn’t exceed viewport height */
   overflow: hidden;
-  /* Prevent scrolling within container */
 }
 
 /* Back Button Styling */
@@ -43,7 +35,6 @@
   margin-bottom: 20px;
   display: inline-block;
   position: absolute;
-  /* Positioned at the top left */
   top: 15px;
   left: 15px;
 }
@@ -51,7 +42,6 @@
 .back-btn i {
   margin-right: 5px;
   font-size: 1.5rem;
-  /* Size of the arrow */
 }
 
 .form-group {
@@ -103,7 +93,6 @@ h2 {
 
 .alert-success {
   background-color: #004477;
-  /* Matching the primary blue color */
 }
 
 .alert-danger {
@@ -113,7 +102,6 @@ h2 {
 .alert-warning {
   background-color: #ffc107;
   color: #343a40;
-  /* Making the text dark for better visibility */
 }
 
 .alert-info {
@@ -152,7 +140,5 @@ header {
 
 .form-content {
   max-height: calc(90vh - 60px);
-  /* Make sure it fits into the container with padding */
   overflow-y: auto;
-  /* Allow scrolling within the form, if needed */
 }
