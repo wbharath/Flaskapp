@@ -29,3 +29,6 @@
 [2025-01-15 21:31:41,313] WARNING in app: Registration form validation failed.
 [2025-01-15 21:32:00,846] WARNING in app: Registration form validation failed.
 [2025-01-15 21:32:50,216] WARNING in app: Registration form validation failed.
+[2025-01-17 17:19:11,717] WARNING in app: Failed login attempt for non-existent email: bharadwajdurgasai@gmail.com from IP: 127.0.0.1 at 2025-01-17 17:19:11
+[2025-01-17 17:19:22,689] WARNING in app: Failed login attempt for non-existent email: bharad@gmail.com from IP: 127.0.0.1 at 2025-01-17 17:19:22
+[2025-01-17 17:20:04,611] WARNING in app: Failed login attempt for user: peter@gmail.com from IP: 127.0.0.1 at 2025-01-17 17:20:02

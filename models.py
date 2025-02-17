@@ -20,6 +20,9 @@ class Login(UserMixin, db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
+
+
+
 class Artist(db.Model):
     __tablename__ = 'artist'
 
